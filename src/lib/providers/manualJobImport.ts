@@ -30,6 +30,14 @@ export function normalizeManualJob(input: {
 
 export class ManualImportProvider implements JobProvider {
   sourceName = "ManualImport";
+  capabilities = {
+    canSearch: false,
+    canCapture: true,
+    canAssistedApply: true,
+    canSubmit: false,
+    requiresCredential: false,
+    restrictedReason: "Manual imports need review and assisted apply unless reclassified as an allowed source."
+  };
 
   async searchJobs(): Promise<NormalizedJob[]> {
     return [];

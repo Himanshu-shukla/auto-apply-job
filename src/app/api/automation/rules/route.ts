@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sanitizeRuleInput } from "@/lib/services/automationRules";
 import { logAudit } from "@/lib/services/audit";
@@ -7,13 +7,13 @@ import { logAudit } from "@/lib/services/audit";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const rules = await (prisma as any).automationRule.findMany({ where: { userId: user.id }, orderBy: { updatedAt: "desc" } });
   return NextResponse.json({ rules });
 }
 
 export async function POST(request: NextRequest) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const body = await request.json().catch(() => ({}));
   const data = sanitizeRuleInput(body);
   const rule = await (prisma as any).automationRule.create({ data: { ...data, userId: user.id } });

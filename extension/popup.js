@@ -55,6 +55,8 @@ function bindActions() {
   document.getElementById("saveJob").addEventListener("click", saveJob);
   document.getElementById("matchJob").addEventListener("click", matchJob);
   document.getElementById("autofillSelected").addEventListener("click", autofillSelected);
+  document.getElementById("clickNext").addEventListener("click", clickSafeNext);
+  document.getElementById("clickFinalSubmit").addEventListener("click", clickFinalSubmit);
   document.getElementById("saveMapping").addEventListener("click", saveMappingPattern);
   document.getElementById("markSaved").addEventListener("click", () => markStatus("READY_TO_APPLY", false));
   document.getElementById("markApplied").addEventListener("click", () => markStatus("APPLIED", true));
@@ -112,6 +114,7 @@ async function detect() {
   renderFields();
   renderQuestions();
   renderResumeHelp();
+  renderAutomationHint();
   message(response?.hasApplicationForm ? "Application fields detected." : "Page scanned.");
 }
 
@@ -146,6 +149,7 @@ async function saveJob() {
     state.capturedJob = data.job;
     state.application = data.application;
     renderJob(data.match);
+    renderAutomationHint();
     message("Job saved to tracker.");
   } catch (error) {
     message(error.message);
@@ -187,6 +191,24 @@ async function autofillSelected() {
   state.skippedFields = result.skipped || [];
   await saveApplicationLog();
   message(`Filled ${state.filledFields.length} field(s). Review before submitting manually.`);
+}
+
+async function clickSafeNext() {
+  const result = await sendToTab({ type: "CLICK_SAFE_NEXT" });
+  message(result.clicked ? `Clicked ${result.label || "next"}. Scan the next step before continuing.` : result.reason || "No safe next action available.");
+  await detect();
+}
+
+async function clickFinalSubmit() {
+  if (!state.capturedJob) await saveJob();
+  const policy = finalSubmitPolicy();
+  const result = await sendToTab({ type: "CLICK_FINAL_SUBMIT", policy });
+  if (result.clicked) {
+    await markStatus("APPLIED", true);
+    message(`Clicked ${result.label || "submit"} and marked applied.`);
+  } else {
+    message(result.reason || "Final submit was not clicked.");
+  }
 }
 
 async function generateAnswer(field) {
@@ -322,6 +344,17 @@ function renderFields() {
   }
 }
 
+function renderAutomationHint() {
+  const stateInfo = state.page?.automationState;
+  const policy = finalSubmitPolicy();
+  const hint = document.getElementById("automationHint");
+  const parts = [];
+  if (stateInfo?.blocker) parts.push(stateInfo.blocker);
+  if (stateInfo?.unknownRequiredFields) parts.push(`${stateInfo.unknownRequiredFields} required field(s) need review.`);
+  if (!policy.finalSubmitAllowed) parts.push(policy.reason);
+  hint.textContent = parts.length ? parts.join(" ") : "Safe next is available for multi-step forms. Final submit is allowed only by saved source policy.";
+}
+
 function renderQuestions() {
   const container = document.getElementById("questions");
   const questions = state.page?.questions || [];
@@ -350,6 +383,24 @@ function valueFor(key) {
   if (Array.isArray(value)) return value.join(", ");
   if (value === null || value === undefined) return "";
   return String(value);
+}
+
+function finalSubmitPolicy() {
+  const job = state.capturedJob || {};
+  const sourceType = job.sourceType || "";
+  const automationLevel = job.automationLevel || "save_only";
+  const finalSubmitAllowed =
+    sourceType === "company_career_page" && automationLevel === "one_click_apply";
+  return {
+    sourceType,
+    automationLevel,
+    finalSubmitAllowed,
+    reason: finalSubmitAllowed
+      ? ""
+      : sourceType
+        ? `Final submit blocked for ${sourceType}/${automationLevel}.`
+        : "Save the job first so source policy can be checked."
+  };
 }
 
 async function saveMappingPattern() {

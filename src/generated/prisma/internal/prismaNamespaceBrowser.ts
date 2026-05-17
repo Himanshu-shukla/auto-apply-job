@@ -73,7 +73,11 @@ export const ModelName = {
   Notification: 'Notification',
   AutomationSetting: 'AutomationSetting',
   EmailSetting: 'EmailSetting',
-  ProviderRunLog: 'ProviderRunLog'
+  ProviderRunLog: 'ProviderRunLog',
+  ApplicationCampaign: 'ApplicationCampaign',
+  CampaignJob: 'CampaignJob',
+  ApplicationAttempt: 'ApplicationAttempt',
+  ProviderCredential: 'ProviderCredential'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -486,6 +490,87 @@ export const ProviderRunLogScalarFieldEnum = {
 } as const
 
 export type ProviderRunLogScalarFieldEnum = (typeof ProviderRunLogScalarFieldEnum)[keyof typeof ProviderRunLogScalarFieldEnum]
+
+
+export const ApplicationCampaignScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  targetCount: 'targetCount',
+  minMatchScore: 'minMatchScore',
+  status: 'status',
+  approvalMode: 'approvalMode',
+  filters: 'filters',
+  sourcePolicySnapshot: 'sourcePolicySnapshot',
+  preparedCount: 'preparedCount',
+  submittedCount: 'submittedCount',
+  failedCount: 'failedCount',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ApplicationCampaignScalarFieldEnum = (typeof ApplicationCampaignScalarFieldEnum)[keyof typeof ApplicationCampaignScalarFieldEnum]
+
+
+export const CampaignJobScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  campaignId: 'campaignId',
+  jobId: 'jobId',
+  applicationId: 'applicationId',
+  status: 'status',
+  matchScore: 'matchScore',
+  recommendedAction: 'recommendedAction',
+  riskWarnings: 'riskWarnings',
+  generatedPayload: 'generatedPayload',
+  sourceCapabilities: 'sourceCapabilities',
+  approvedAt: 'approvedAt',
+  rejectedAt: 'rejectedAt',
+  lastAttemptAt: 'lastAttemptAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CampaignJobScalarFieldEnum = (typeof CampaignJobScalarFieldEnum)[keyof typeof CampaignJobScalarFieldEnum]
+
+
+export const ApplicationAttemptScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  campaignId: 'campaignId',
+  campaignJobId: 'campaignJobId',
+  jobId: 'jobId',
+  applicationId: 'applicationId',
+  provider: 'provider',
+  status: 'status',
+  action: 'action',
+  requestPayload: 'requestPayload',
+  responsePayload: 'responsePayload',
+  errorMessage: 'errorMessage',
+  consentAt: 'consentAt',
+  attemptedAt: 'attemptedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ApplicationAttemptScalarFieldEnum = (typeof ApplicationAttemptScalarFieldEnum)[keyof typeof ApplicationAttemptScalarFieldEnum]
+
+
+export const ProviderCredentialScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  provider: 'provider',
+  label: 'label',
+  credentialType: 'credentialType',
+  secretRef: 'secretRef',
+  metadata: 'metadata',
+  enabled: 'enabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProviderCredentialScalarFieldEnum = (typeof ProviderCredentialScalarFieldEnum)[keyof typeof ProviderCredentialScalarFieldEnum]
 
 
 export const SortOrder = {

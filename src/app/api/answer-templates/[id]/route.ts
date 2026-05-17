@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { deleteAnswerTemplate, findAnswerTemplate, updateAnswerTemplate } from "@/lib/services/phase2Storage";
 
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const body = await request.json().catch(() => ({}));
   const current = await findAnswerTemplate(params.id, user.id);
   if (!current) return NextResponse.json({ error: "Template not found." }, { status: 404 });
@@ -20,7 +20,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const current = await findAnswerTemplate(params.id, user.id);
   if (!current) return NextResponse.json({ error: "Template not found." }, { status: 404 });
   await deleteAnswerTemplate(current.id);

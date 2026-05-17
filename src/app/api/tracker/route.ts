@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getApplicationPhase2Fields, getJobPhase2Fields } from "@/lib/services/phase2Storage";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const applications = await prisma.application.findMany({
     where: { userId: user.id },
     include: { job: { include: { matches: { orderBy: { createdAt: "desc" }, take: 1 } } } },

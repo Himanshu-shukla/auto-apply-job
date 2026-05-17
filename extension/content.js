@@ -20,6 +20,8 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message.type === "DETECT_PAGE") sendResponse(detectPage());
     if (message.type === "FILL_FIELDS") sendResponse(fillFields(message.fields || []));
     if (message.type === "INSERT_ANSWER") sendResponse(insertAnswer(message.selector, message.answer));
+    if (message.type === "CLICK_SAFE_NEXT") sendResponse(clickSafeNext());
+    if (message.type === "CLICK_FINAL_SUBMIT") sendResponse(clickFinalSubmit(message.policy || {}));
   } catch (error) {
     sendResponse({ error: error instanceof Error ? error.message : "Content script failed." });
   }
@@ -35,7 +37,8 @@ function detectPage() {
     job,
     fields,
     questions: fields.filter((field) => field.profileKey === "customQuestion" || field.tagName === "textarea"),
-    hasApplicationForm: fields.length > 0
+    hasApplicationForm: fields.length > 0,
+    automationState: inspectAutomationState(fields)
   };
 }
 
@@ -71,7 +74,8 @@ function describeField(field, index) {
     tagName: field.tagName.toLowerCase(),
     maxLength: field.maxLength > 0 ? field.maxLength : null,
     options,
-    value: field.value || ""
+    value: field.value || "",
+    required: Boolean(field.required || field.getAttribute("aria-required") === "true")
   };
 }
 
@@ -128,6 +132,38 @@ function insertAnswer(selector, answer) {
   if (!element || isUnsafeField(element)) return { inserted: false };
   setFieldValue(element, answer || "");
   return { inserted: true };
+}
+
+function clickSafeNext() {
+  const blocker = automationBlocker();
+  if (blocker) return { clicked: false, blocked: true, reason: blocker };
+  const button = findButton(/\b(next|continue|save and continue|review|proceed)\b/i, /\b(submit|apply|send application|finish)\b/i);
+  if (!button) return { clicked: false, blocked: false, reason: "No safe next button found." };
+  button.click();
+  return { clicked: true, blocked: false, label: button.innerText || button.value || "Next" };
+}
+
+function clickFinalSubmit(policy) {
+  const blocker = automationBlocker();
+  if (blocker) return { clicked: false, blocked: true, reason: blocker };
+  if (!policy.finalSubmitAllowed) return { clicked: false, blocked: true, reason: policy.reason || "Source policy blocks final auto-submit." };
+  if (/restricted_platform|unknown/i.test(policy.sourceType || "")) {
+    return { clicked: false, blocked: true, reason: "Restricted or unknown sources require assisted apply only." };
+  }
+  const button = findButton(/\b(submit|apply|send application|finish)\b/i);
+  if (!button) return { clicked: false, blocked: false, reason: "No final submit button found." };
+  button.click();
+  return { clicked: true, blocked: false, label: button.innerText || button.value || "Submit" };
+}
+
+function inspectAutomationState(fields) {
+  const blocker = automationBlocker();
+  return {
+    blocker,
+    canClickNext: !blocker && Boolean(findButton(/\b(next|continue|save and continue|review|proceed)\b/i, /\b(submit|apply|send application|finish)\b/i)),
+    hasFinalSubmit: !blocker && Boolean(findButton(/\b(submit|apply|send application|finish)\b/i)),
+    unknownRequiredFields: fields.filter((field) => field.profileKey === "unknown" && requiredLike(field)).length
+  };
 }
 
 function setFieldValue(element, value) {
@@ -198,7 +234,41 @@ function isVisibleField(field) {
 function isUnsafeField(field) {
   const type = (field.getAttribute("type") || "").toLowerCase();
   const text = [field.name, field.id, getLabel(field), field.placeholder].join(" ").toLowerCase();
-  return ["password", "hidden", "submit", "button", "reset"].includes(type) || /\b(password|otp|captcha|ssn|credit card)\b/.test(text);
+  return ["password", "hidden", "submit", "button", "reset"].includes(type) || /\b(password|otp|captcha|ssn|social security|credit card|payment)\b/.test(text);
+}
+
+function automationBlocker() {
+  const text = document.body.innerText.toLowerCase();
+  if (/\bcaptcha|recaptcha|hcaptcha\b/.test(text) || document.querySelector("[class*='captcha'], [id*='captcha'], iframe[src*='captcha']")) return "CAPTCHA detected.";
+  if (/\b(sign in|log in|login|create account|verify email|otp|one-time code)\b/.test(text)) return "Login or verification step detected.";
+  const unsafe = Array.from(document.querySelectorAll("input, textarea, select")).find((field) => isVisibleField(field) && isSensitiveRequired(field));
+  if (unsafe) return "Sensitive required field detected.";
+  return "";
+}
+
+function isSensitiveRequired(field) {
+  const text = [field.name, field.id, getLabel(field), field.placeholder, nearbyText(field)].join(" ").toLowerCase();
+  return requiredLike(describeField(field, 0)) && /\b(ssn|social security|date of birth|dob|credit card|payment|password|otp)\b/.test(text);
+}
+
+function requiredLike(field) {
+  return Boolean(field.required || /\b(required|must answer)\b/i.test(field.nearbyText || ""));
+}
+
+function findButton(includePattern, excludePattern) {
+  const buttons = Array.from(document.querySelectorAll("button, input[type='button'], input[type='submit'], a[role='button']"));
+  return buttons.find((button) => {
+    if (!isVisibleButton(button)) return false;
+    const label = [button.innerText, button.value, button.getAttribute("aria-label"), button.title].join(" ").trim();
+    if (!includePattern.test(label)) return false;
+    return !excludePattern || !excludePattern.test(label);
+  });
+}
+
+function isVisibleButton(button) {
+  const style = window.getComputedStyle(button);
+  const rect = button.getBoundingClientRect();
+  return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0 && !button.disabled;
 }
 
 function getLabel(field) {

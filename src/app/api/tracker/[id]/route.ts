@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma, type ApplicationStatus } from "@/generated/prisma/client";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { nextApplicationHistory } from "@/lib/services/application";
 import { setApplicationExtensionFields } from "@/lib/services/phase2Storage";
@@ -10,7 +10,7 @@ const statuses: ApplicationStatus[] = ["SAVED", "READY_TO_APPLY", "APPLIED", "IN
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const body = await request.json();
   const application = await prisma.application.findFirst({ where: { id: params.id, userId: user.id } });
   if (!application) return NextResponse.json({ error: "Application not found." }, { status: 404 });

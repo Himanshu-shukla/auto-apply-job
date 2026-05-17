@@ -4,6 +4,14 @@ import { defaultAutomationLevel } from "@/lib/services/sourcePolicy";
 
 export class CompanyCareerPageProvider implements JobProvider {
   sourceName = "CompanyCareerPageProvider";
+  capabilities = {
+    canSearch: true,
+    canCapture: true,
+    canAssistedApply: true,
+    canSubmit: false,
+    requiresCredential: false,
+    restrictedReason: "Company career pages use the extension state machine; final submit requires an explicitly allowed domain."
+  };
 
   constructor(private allowedDomains: string[] = []) {}
 

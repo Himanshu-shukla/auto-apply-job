@@ -91,6 +91,33 @@ enum FollowUpStatus {
   disabled
 }
 
+enum CampaignStatus {
+  draft
+  preparing
+  ready
+  running
+  paused
+  completed
+  failed
+}
+
+enum CampaignJobStatus {
+  queued
+  needs_review
+  ready
+  blocked
+  submitted
+  failed
+  skipped
+}
+
+enum ApplicationAttemptStatus {
+  pending
+  blocked
+  submitted
+  failed
+}
+
 model User {
   id             String          @id @default(cuid())
   email          String          @unique
@@ -115,6 +142,10 @@ model User {
   automationSetting AutomationSetting?
   emailSetting   EmailSetting?
   providerRunLogs ProviderRunLog[]
+  applicationCampaigns ApplicationCampaign[]
+  campaignJobs  CampaignJob[]
+  applicationAttempts ApplicationAttempt[]
+  providerCredentials ProviderCredential[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 }
@@ -181,6 +212,8 @@ model Job {
   recruiterEmail     String?
   riskFlags          String[]         @default([])
   approvalQueueItems ApprovalQueueItem[]
+  campaignJobs      CampaignJob[]
+  applicationAttempts ApplicationAttempt[]
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
 
@@ -264,6 +297,8 @@ model Application {
   approvalQueueItems ApprovalQueueItem[]
   emailApplications EmailApplication[]
   followUps      FollowUp[]
+  campaignJobs   CampaignJob[]
+  attempts       ApplicationAttempt[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
@@ -523,4 +558,101 @@ model ProviderRunLog {
   createdAt   DateTime @default(now())
 
   @@index([userId, provider, createdAt])
+}
+
+model ApplicationCampaign {
+  id                 String             @id @default(cuid())
+  userId             String
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name               String
+  targetCount        Int                @default(50)
+  minMatchScore      Int                @default(70)
+  status             CampaignStatus     @default(draft)
+  approvalMode       ApprovalMode       @default(manual_review)
+  filters            Json               @default("{}")
+  sourcePolicySnapshot Json             @default("{}")
+  preparedCount      Int                @default(0)
+  submittedCount     Int                @default(0)
+  failedCount        Int                @default(0)
+  startedAt          DateTime?
+  completedAt        DateTime?
+  campaignJobs       CampaignJob[]
+  attempts           ApplicationAttempt[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@index([userId, status, createdAt])
+}
+
+model CampaignJob {
+  id                String              @id @default(cuid())
+  userId            String
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaignId        String
+  campaign          ApplicationCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  jobId             String
+  job               Job                 @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicationId     String?
+  application       Application?        @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  status            CampaignJobStatus   @default(queued)
+  matchScore        Int                 @default(0)
+  recommendedAction String              @default("review")
+  riskWarnings      String[]            @default([])
+  generatedPayload  Json                @default("{}")
+  sourceCapabilities Json               @default("{}")
+  approvedAt        DateTime?
+  rejectedAt        DateTime?
+  lastAttemptAt     DateTime?
+  attempts          ApplicationAttempt[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@unique([campaignId, jobId])
+  @@index([userId, status])
+  @@index([campaignId, status])
+  @@index([applicationId])
+}
+
+model ApplicationAttempt {
+  id              String                   @id @default(cuid())
+  userId          String
+  user            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaignId      String?
+  campaign        ApplicationCampaign?     @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  campaignJobId   String?
+  campaignJob     CampaignJob?             @relation(fields: [campaignJobId], references: [id], onDelete: SetNull)
+  jobId           String
+  job             Job                      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicationId   String?
+  application     Application?             @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  provider        String
+  status          ApplicationAttemptStatus @default(pending)
+  action          AutomationLevel          @default(assisted_apply)
+  requestPayload  Json                     @default("{}")
+  responsePayload Json                     @default("{}")
+  errorMessage    String?
+  consentAt       DateTime?
+  attemptedAt     DateTime                 @default(now())
+  createdAt       DateTime                 @default(now())
+
+  @@index([userId, status, attemptedAt])
+  @@index([campaignId])
+  @@index([campaignJobId])
+  @@index([applicationId])
+}
+
+model ProviderCredential {
+  id             String     @id @default(cuid())
+  userId         String
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider       String
+  label          String
+  credentialType String     @default("api_key")
+  secretRef      String?
+  metadata       Json       @default("{}")
+  enabled        Boolean    @default(true)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([userId, provider, enabled])
 }

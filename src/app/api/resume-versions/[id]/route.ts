@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { setDefaultResumeVersion } from "@/lib/services/resumeVersions";
 
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const body = await request.json().catch(() => ({}));
   const existing = await (prisma as any).resumeVersion.findFirst({ where: { id: params.id, userId: user.id } });
   if (!existing) return NextResponse.json({ error: "Resume version not found." }, { status: 404 });
@@ -27,7 +27,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   await (prisma as any).resumeVersion.deleteMany({ where: { id: params.id, userId: user.id, isDefault: false } });
   return NextResponse.json({ ok: true });
 }

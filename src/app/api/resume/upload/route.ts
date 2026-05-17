@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { extractResumeText, parseResumeText } from "@/lib/services/resumeParser";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+const MAX_RESUME_UPLOAD_BYTES = 5 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,8 +22,11 @@ export async function POST(request: NextRequest) {
     if (!allowed.includes(file.type) && !/\.(pdf|docx|doc)$/i.test(fileName)) {
       return NextResponse.json({ error: "Please upload a PDF or DOCX resume." }, { status: 400 });
     }
+    if (file.size > MAX_RESUME_UPLOAD_BYTES) {
+      return NextResponse.json({ error: "Resume file must be 5MB or smaller." }, { status: 400 });
+    }
 
-    const user = await getDemoUser();
+    const user = await getCurrentUser();
     const buffer = Buffer.from(await file.arrayBuffer());
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });

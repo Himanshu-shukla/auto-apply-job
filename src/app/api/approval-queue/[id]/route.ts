@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const body = await request.json().catch(() => ({}));
   const item = await (prisma as any).approvalQueueItem.updateMany({
     where: { id: params.id, userId: user.id },

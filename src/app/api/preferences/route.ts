@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizePreferences } from "@/lib/services/preferences";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const preferences = await prisma.jobPreference.findFirst({
     where: { userId: user.id },
     orderBy: { updatedAt: "desc" }
@@ -15,7 +15,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const normalized = normalizePreferences(await request.json());
   if (!normalized.targetRole) {
     return NextResponse.json({ error: "Target role is required." }, { status: 400 });

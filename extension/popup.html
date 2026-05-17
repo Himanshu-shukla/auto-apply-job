@@ -52,7 +52,11 @@
         </div>
         <div id="fields"></div>
         <button id="autofillSelected" class="primary wide">Autofill Selected</button>
-        <p class="hint">No submit buttons are clicked. Review every field before submitting manually.</p>
+        <div class="row">
+          <button id="clickNext">Safe Next</button>
+          <button id="clickFinalSubmit" class="primary">Policy Submit</button>
+        </div>
+        <p class="hint" id="automationHint">Multi-step actions stop on unknown policy, restricted platforms, CAPTCHA, login, or sensitive required fields.</p>
       </section>
 
       <section id="answers" class="panel">

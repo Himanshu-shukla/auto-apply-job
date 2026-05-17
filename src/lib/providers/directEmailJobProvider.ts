@@ -4,6 +4,13 @@ import { defaultAutomationLevel } from "@/lib/services/sourcePolicy";
 
 export class DirectEmailJobProvider implements JobProvider {
   sourceName = "DirectEmailJobProvider";
+  capabilities = {
+    canSearch: true,
+    canCapture: true,
+    canAssistedApply: true,
+    canSubmit: true,
+    requiresCredential: false
+  };
 
   async searchJobs(_preferences: JobPreferenceInput): Promise<NormalizedJob[]> {
     return [];

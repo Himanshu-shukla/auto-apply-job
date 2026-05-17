@@ -156,3 +156,23 @@ export type EmailSetting = Prisma.EmailSettingModel
  * 
  */
 export type ProviderRunLog = Prisma.ProviderRunLogModel
+/**
+ * Model ApplicationCampaign
+ * 
+ */
+export type ApplicationCampaign = Prisma.ApplicationCampaignModel
+/**
+ * Model CampaignJob
+ * 
+ */
+export type CampaignJob = Prisma.CampaignJobModel
+/**
+ * Model ApplicationAttempt
+ * 
+ */
+export type ApplicationAttempt = Prisma.ApplicationAttemptModel
+/**
+ * Model ProviderCredential
+ * 
+ */
+export type ProviderCredential = Prisma.ProviderCredentialModel

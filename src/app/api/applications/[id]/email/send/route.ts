@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { sendEmailApplication } from "@/lib/services/emailApplications";
 import { createNotification } from "@/lib/services/notifications";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   try {
     const emailApplication = await sendEmailApplication(user.id, params.id, await request.json().catch(() => ({})));
     return NextResponse.json({ emailApplication });

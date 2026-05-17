@@ -306,6 +306,8 @@ export type ApplicationWhereInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemListRelationFilter
   emailApplications?: Prisma.EmailApplicationListRelationFilter
   followUps?: Prisma.FollowUpListRelationFilter
+  campaignJobs?: Prisma.CampaignJobListRelationFilter
+  attempts?: Prisma.ApplicationAttemptListRelationFilter
 }
 
 export type ApplicationOrderByWithRelationInput = {
@@ -337,6 +339,8 @@ export type ApplicationOrderByWithRelationInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemOrderByRelationAggregateInput
   emailApplications?: Prisma.EmailApplicationOrderByRelationAggregateInput
   followUps?: Prisma.FollowUpOrderByRelationAggregateInput
+  campaignJobs?: Prisma.CampaignJobOrderByRelationAggregateInput
+  attempts?: Prisma.ApplicationAttemptOrderByRelationAggregateInput
 }
 
 export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
@@ -372,6 +376,8 @@ export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
   approvalQueueItems?: Prisma.ApprovalQueueItemListRelationFilter
   emailApplications?: Prisma.EmailApplicationListRelationFilter
   followUps?: Prisma.FollowUpListRelationFilter
+  campaignJobs?: Prisma.CampaignJobListRelationFilter
+  attempts?: Prisma.ApplicationAttemptListRelationFilter
 }, "id" | "userId_jobId">
 
 export type ApplicationOrderByWithAggregationInput = {
@@ -452,6 +458,8 @@ export type ApplicationCreateInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateInput = {
@@ -480,6 +488,8 @@ export type ApplicationUncheckedCreateInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUpdateInput = {
@@ -508,6 +518,8 @@ export type ApplicationUpdateInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateInput = {
@@ -536,6 +548,8 @@ export type ApplicationUncheckedUpdateInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationCreateManyInput = {
@@ -902,6 +916,38 @@ export type ApplicationUncheckedUpdateManyWithoutResumeVersionRecordNestedInput 
   deleteMany?: Prisma.ApplicationScalarWhereInput | Prisma.ApplicationScalarWhereInput[]
 }
 
+export type ApplicationCreateNestedOneWithoutCampaignJobsInput = {
+  create?: Prisma.XOR<Prisma.ApplicationCreateWithoutCampaignJobsInput, Prisma.ApplicationUncheckedCreateWithoutCampaignJobsInput>
+  connectOrCreate?: Prisma.ApplicationCreateOrConnectWithoutCampaignJobsInput
+  connect?: Prisma.ApplicationWhereUniqueInput
+}
+
+export type ApplicationUpdateOneWithoutCampaignJobsNestedInput = {
+  create?: Prisma.XOR<Prisma.ApplicationCreateWithoutCampaignJobsInput, Prisma.ApplicationUncheckedCreateWithoutCampaignJobsInput>
+  connectOrCreate?: Prisma.ApplicationCreateOrConnectWithoutCampaignJobsInput
+  upsert?: Prisma.ApplicationUpsertWithoutCampaignJobsInput
+  disconnect?: Prisma.ApplicationWhereInput | boolean
+  delete?: Prisma.ApplicationWhereInput | boolean
+  connect?: Prisma.ApplicationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ApplicationUpdateToOneWithWhereWithoutCampaignJobsInput, Prisma.ApplicationUpdateWithoutCampaignJobsInput>, Prisma.ApplicationUncheckedUpdateWithoutCampaignJobsInput>
+}
+
+export type ApplicationCreateNestedOneWithoutAttemptsInput = {
+  create?: Prisma.XOR<Prisma.ApplicationCreateWithoutAttemptsInput, Prisma.ApplicationUncheckedCreateWithoutAttemptsInput>
+  connectOrCreate?: Prisma.ApplicationCreateOrConnectWithoutAttemptsInput
+  connect?: Prisma.ApplicationWhereUniqueInput
+}
+
+export type ApplicationUpdateOneWithoutAttemptsNestedInput = {
+  create?: Prisma.XOR<Prisma.ApplicationCreateWithoutAttemptsInput, Prisma.ApplicationUncheckedCreateWithoutAttemptsInput>
+  connectOrCreate?: Prisma.ApplicationCreateOrConnectWithoutAttemptsInput
+  upsert?: Prisma.ApplicationUpsertWithoutAttemptsInput
+  disconnect?: Prisma.ApplicationWhereInput | boolean
+  delete?: Prisma.ApplicationWhereInput | boolean
+  connect?: Prisma.ApplicationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ApplicationUpdateToOneWithWhereWithoutAttemptsInput, Prisma.ApplicationUpdateWithoutAttemptsInput>, Prisma.ApplicationUncheckedUpdateWithoutAttemptsInput>
+}
+
 export type ApplicationCreateWithoutUserInput = {
   id?: string
   status?: $Enums.ApplicationStatus
@@ -927,6 +973,8 @@ export type ApplicationCreateWithoutUserInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutUserInput = {
@@ -954,6 +1002,8 @@ export type ApplicationUncheckedCreateWithoutUserInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutUserInput = {
@@ -1033,6 +1083,8 @@ export type ApplicationCreateWithoutJobInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutJobInput = {
@@ -1060,6 +1112,8 @@ export type ApplicationUncheckedCreateWithoutJobInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutJobInput = {
@@ -1113,6 +1167,8 @@ export type ApplicationCreateWithoutAnswersInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutAnswersInput = {
@@ -1140,6 +1196,8 @@ export type ApplicationUncheckedCreateWithoutAnswersInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutAnswersInput = {
@@ -1183,6 +1241,8 @@ export type ApplicationUpdateWithoutAnswersInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutAnswersInput = {
@@ -1210,6 +1270,8 @@ export type ApplicationUncheckedUpdateWithoutAnswersInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationCreateWithoutAutofillLogsInput = {
@@ -1237,6 +1299,8 @@ export type ApplicationCreateWithoutAutofillLogsInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutAutofillLogsInput = {
@@ -1264,6 +1328,8 @@ export type ApplicationUncheckedCreateWithoutAutofillLogsInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutAutofillLogsInput = {
@@ -1307,6 +1373,8 @@ export type ApplicationUpdateWithoutAutofillLogsInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutAutofillLogsInput = {
@@ -1334,6 +1402,8 @@ export type ApplicationUncheckedUpdateWithoutAutofillLogsInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationCreateWithoutApprovalQueueItemsInput = {
@@ -1361,6 +1431,8 @@ export type ApplicationCreateWithoutApprovalQueueItemsInput = {
   autofillLogs?: Prisma.AutofillLogCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutApprovalQueueItemsInput = {
@@ -1388,6 +1460,8 @@ export type ApplicationUncheckedCreateWithoutApprovalQueueItemsInput = {
   autofillLogs?: Prisma.AutofillLogUncheckedCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutApprovalQueueItemsInput = {
@@ -1431,6 +1505,8 @@ export type ApplicationUpdateWithoutApprovalQueueItemsInput = {
   autofillLogs?: Prisma.AutofillLogUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutApprovalQueueItemsInput = {
@@ -1458,6 +1534,8 @@ export type ApplicationUncheckedUpdateWithoutApprovalQueueItemsInput = {
   autofillLogs?: Prisma.AutofillLogUncheckedUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationCreateWithoutEmailApplicationsInput = {
@@ -1485,6 +1563,8 @@ export type ApplicationCreateWithoutEmailApplicationsInput = {
   autofillLogs?: Prisma.AutofillLogCreateNestedManyWithoutApplicationInput
   approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutEmailApplicationsInput = {
@@ -1512,6 +1592,8 @@ export type ApplicationUncheckedCreateWithoutEmailApplicationsInput = {
   autofillLogs?: Prisma.AutofillLogUncheckedCreateNestedManyWithoutApplicationInput
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutEmailApplicationsInput = {
@@ -1555,6 +1637,8 @@ export type ApplicationUpdateWithoutEmailApplicationsInput = {
   autofillLogs?: Prisma.AutofillLogUpdateManyWithoutApplicationNestedInput
   approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutEmailApplicationsInput = {
@@ -1582,6 +1666,8 @@ export type ApplicationUncheckedUpdateWithoutEmailApplicationsInput = {
   autofillLogs?: Prisma.AutofillLogUncheckedUpdateManyWithoutApplicationNestedInput
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationCreateWithoutFollowUpsInput = {
@@ -1609,6 +1695,8 @@ export type ApplicationCreateWithoutFollowUpsInput = {
   autofillLogs?: Prisma.AutofillLogCreateNestedManyWithoutApplicationInput
   approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutFollowUpsInput = {
@@ -1636,6 +1724,8 @@ export type ApplicationUncheckedCreateWithoutFollowUpsInput = {
   autofillLogs?: Prisma.AutofillLogUncheckedCreateNestedManyWithoutApplicationInput
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutFollowUpsInput = {
@@ -1679,6 +1769,8 @@ export type ApplicationUpdateWithoutFollowUpsInput = {
   autofillLogs?: Prisma.AutofillLogUpdateManyWithoutApplicationNestedInput
   approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutFollowUpsInput = {
@@ -1706,6 +1798,8 @@ export type ApplicationUncheckedUpdateWithoutFollowUpsInput = {
   autofillLogs?: Prisma.AutofillLogUncheckedUpdateManyWithoutApplicationNestedInput
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationCreateWithoutResumeVersionRecordInput = {
@@ -1733,6 +1827,8 @@ export type ApplicationCreateWithoutResumeVersionRecordInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutResumeVersionRecordInput = {
@@ -1760,6 +1856,8 @@ export type ApplicationUncheckedCreateWithoutResumeVersionRecordInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
   emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
   followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutResumeVersionRecordInput = {
@@ -1786,6 +1884,270 @@ export type ApplicationUpdateWithWhereUniqueWithoutResumeVersionRecordInput = {
 export type ApplicationUpdateManyWithWhereWithoutResumeVersionRecordInput = {
   where: Prisma.ApplicationScalarWhereInput
   data: Prisma.XOR<Prisma.ApplicationUpdateManyMutationInput, Prisma.ApplicationUncheckedUpdateManyWithoutResumeVersionRecordInput>
+}
+
+export type ApplicationCreateWithoutCampaignJobsInput = {
+  id?: string
+  status?: $Enums.ApplicationStatus
+  notes?: string
+  appliedDate?: Date | string | null
+  submittedAt?: Date | string | null
+  followUpDate?: Date | string | null
+  resumeVersion?: string | null
+  coverLetter?: string | null
+  sourceUrl: string
+  appliedViaExtension?: boolean
+  approvalStatus?: $Enums.ApprovalQueueStatus | null
+  automationUsed?: boolean
+  lastFollowUpAt?: Date | string | null
+  responseStatus?: string | null
+  history?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutApplicationsInput
+  job: Prisma.JobCreateNestedOneWithoutApplicationsInput
+  resumeVersionRecord?: Prisma.ResumeVersionCreateNestedOneWithoutApplicationsInput
+  answers?: Prisma.ApplicationAnswerCreateNestedManyWithoutApplicationInput
+  autofillLogs?: Prisma.AutofillLogCreateNestedManyWithoutApplicationInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
+  emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
+  followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutApplicationInput
+}
+
+export type ApplicationUncheckedCreateWithoutCampaignJobsInput = {
+  id?: string
+  userId: string
+  jobId: string
+  status?: $Enums.ApplicationStatus
+  notes?: string
+  appliedDate?: Date | string | null
+  submittedAt?: Date | string | null
+  followUpDate?: Date | string | null
+  resumeVersion?: string | null
+  resumeVersionId?: string | null
+  coverLetter?: string | null
+  sourceUrl: string
+  appliedViaExtension?: boolean
+  approvalStatus?: $Enums.ApprovalQueueStatus | null
+  automationUsed?: boolean
+  lastFollowUpAt?: Date | string | null
+  responseStatus?: string | null
+  history?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  answers?: Prisma.ApplicationAnswerUncheckedCreateNestedManyWithoutApplicationInput
+  autofillLogs?: Prisma.AutofillLogUncheckedCreateNestedManyWithoutApplicationInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
+  emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
+  followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  attempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutApplicationInput
+}
+
+export type ApplicationCreateOrConnectWithoutCampaignJobsInput = {
+  where: Prisma.ApplicationWhereUniqueInput
+  create: Prisma.XOR<Prisma.ApplicationCreateWithoutCampaignJobsInput, Prisma.ApplicationUncheckedCreateWithoutCampaignJobsInput>
+}
+
+export type ApplicationUpsertWithoutCampaignJobsInput = {
+  update: Prisma.XOR<Prisma.ApplicationUpdateWithoutCampaignJobsInput, Prisma.ApplicationUncheckedUpdateWithoutCampaignJobsInput>
+  create: Prisma.XOR<Prisma.ApplicationCreateWithoutCampaignJobsInput, Prisma.ApplicationUncheckedCreateWithoutCampaignJobsInput>
+  where?: Prisma.ApplicationWhereInput
+}
+
+export type ApplicationUpdateToOneWithWhereWithoutCampaignJobsInput = {
+  where?: Prisma.ApplicationWhereInput
+  data: Prisma.XOR<Prisma.ApplicationUpdateWithoutCampaignJobsInput, Prisma.ApplicationUncheckedUpdateWithoutCampaignJobsInput>
+}
+
+export type ApplicationUpdateWithoutCampaignJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resumeVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedViaExtension?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  approvalStatus?: Prisma.NullableEnumApprovalQueueStatusFieldUpdateOperationsInput | $Enums.ApprovalQueueStatus | null
+  automationUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastFollowUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  responseStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  history?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutApplicationsNestedInput
+  job?: Prisma.JobUpdateOneRequiredWithoutApplicationsNestedInput
+  resumeVersionRecord?: Prisma.ResumeVersionUpdateOneWithoutApplicationsNestedInput
+  answers?: Prisma.ApplicationAnswerUpdateManyWithoutApplicationNestedInput
+  autofillLogs?: Prisma.AutofillLogUpdateManyWithoutApplicationNestedInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
+  emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
+  followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
+}
+
+export type ApplicationUncheckedUpdateWithoutCampaignJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  jobId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resumeVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resumeVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedViaExtension?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  approvalStatus?: Prisma.NullableEnumApprovalQueueStatusFieldUpdateOperationsInput | $Enums.ApprovalQueueStatus | null
+  automationUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastFollowUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  responseStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  history?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  answers?: Prisma.ApplicationAnswerUncheckedUpdateManyWithoutApplicationNestedInput
+  autofillLogs?: Prisma.AutofillLogUncheckedUpdateManyWithoutApplicationNestedInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
+  emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
+  followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
+}
+
+export type ApplicationCreateWithoutAttemptsInput = {
+  id?: string
+  status?: $Enums.ApplicationStatus
+  notes?: string
+  appliedDate?: Date | string | null
+  submittedAt?: Date | string | null
+  followUpDate?: Date | string | null
+  resumeVersion?: string | null
+  coverLetter?: string | null
+  sourceUrl: string
+  appliedViaExtension?: boolean
+  approvalStatus?: $Enums.ApprovalQueueStatus | null
+  automationUsed?: boolean
+  lastFollowUpAt?: Date | string | null
+  responseStatus?: string | null
+  history?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutApplicationsInput
+  job: Prisma.JobCreateNestedOneWithoutApplicationsInput
+  resumeVersionRecord?: Prisma.ResumeVersionCreateNestedOneWithoutApplicationsInput
+  answers?: Prisma.ApplicationAnswerCreateNestedManyWithoutApplicationInput
+  autofillLogs?: Prisma.AutofillLogCreateNestedManyWithoutApplicationInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutApplicationInput
+  emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutApplicationInput
+  followUps?: Prisma.FollowUpCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutApplicationInput
+}
+
+export type ApplicationUncheckedCreateWithoutAttemptsInput = {
+  id?: string
+  userId: string
+  jobId: string
+  status?: $Enums.ApplicationStatus
+  notes?: string
+  appliedDate?: Date | string | null
+  submittedAt?: Date | string | null
+  followUpDate?: Date | string | null
+  resumeVersion?: string | null
+  resumeVersionId?: string | null
+  coverLetter?: string | null
+  sourceUrl: string
+  appliedViaExtension?: boolean
+  approvalStatus?: $Enums.ApprovalQueueStatus | null
+  automationUsed?: boolean
+  lastFollowUpAt?: Date | string | null
+  responseStatus?: string | null
+  history?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  answers?: Prisma.ApplicationAnswerUncheckedCreateNestedManyWithoutApplicationInput
+  autofillLogs?: Prisma.AutofillLogUncheckedCreateNestedManyWithoutApplicationInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutApplicationInput
+  emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutApplicationInput
+  followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutApplicationInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutApplicationInput
+}
+
+export type ApplicationCreateOrConnectWithoutAttemptsInput = {
+  where: Prisma.ApplicationWhereUniqueInput
+  create: Prisma.XOR<Prisma.ApplicationCreateWithoutAttemptsInput, Prisma.ApplicationUncheckedCreateWithoutAttemptsInput>
+}
+
+export type ApplicationUpsertWithoutAttemptsInput = {
+  update: Prisma.XOR<Prisma.ApplicationUpdateWithoutAttemptsInput, Prisma.ApplicationUncheckedUpdateWithoutAttemptsInput>
+  create: Prisma.XOR<Prisma.ApplicationCreateWithoutAttemptsInput, Prisma.ApplicationUncheckedCreateWithoutAttemptsInput>
+  where?: Prisma.ApplicationWhereInput
+}
+
+export type ApplicationUpdateToOneWithWhereWithoutAttemptsInput = {
+  where?: Prisma.ApplicationWhereInput
+  data: Prisma.XOR<Prisma.ApplicationUpdateWithoutAttemptsInput, Prisma.ApplicationUncheckedUpdateWithoutAttemptsInput>
+}
+
+export type ApplicationUpdateWithoutAttemptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resumeVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedViaExtension?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  approvalStatus?: Prisma.NullableEnumApprovalQueueStatusFieldUpdateOperationsInput | $Enums.ApprovalQueueStatus | null
+  automationUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastFollowUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  responseStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  history?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutApplicationsNestedInput
+  job?: Prisma.JobUpdateOneRequiredWithoutApplicationsNestedInput
+  resumeVersionRecord?: Prisma.ResumeVersionUpdateOneWithoutApplicationsNestedInput
+  answers?: Prisma.ApplicationAnswerUpdateManyWithoutApplicationNestedInput
+  autofillLogs?: Prisma.AutofillLogUpdateManyWithoutApplicationNestedInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
+  emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
+  followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+}
+
+export type ApplicationUncheckedUpdateWithoutAttemptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  jobId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
+  notes?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  followUpDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resumeVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resumeVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverLetter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  appliedViaExtension?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  approvalStatus?: Prisma.NullableEnumApprovalQueueStatusFieldUpdateOperationsInput | $Enums.ApprovalQueueStatus | null
+  automationUsed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastFollowUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  responseStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  history?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  answers?: Prisma.ApplicationAnswerUncheckedUpdateManyWithoutApplicationNestedInput
+  autofillLogs?: Prisma.AutofillLogUncheckedUpdateManyWithoutApplicationNestedInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
+  emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
+  followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationCreateManyUserInput = {
@@ -1835,6 +2197,8 @@ export type ApplicationUpdateWithoutUserInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutUserInput = {
@@ -1862,6 +2226,8 @@ export type ApplicationUncheckedUpdateWithoutUserInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateManyWithoutUserInput = {
@@ -1933,6 +2299,8 @@ export type ApplicationUpdateWithoutJobInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutJobInput = {
@@ -1960,6 +2328,8 @@ export type ApplicationUncheckedUpdateWithoutJobInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateManyWithoutJobInput = {
@@ -2031,6 +2401,8 @@ export type ApplicationUpdateWithoutResumeVersionRecordInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutResumeVersionRecordInput = {
@@ -2058,6 +2430,8 @@ export type ApplicationUncheckedUpdateWithoutResumeVersionRecordInput = {
   approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutApplicationNestedInput
   emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutApplicationNestedInput
   followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutApplicationNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutApplicationNestedInput
+  attempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateManyWithoutResumeVersionRecordInput = {
@@ -2093,6 +2467,8 @@ export type ApplicationCountOutputType = {
   approvalQueueItems: number
   emailApplications: number
   followUps: number
+  campaignJobs: number
+  attempts: number
 }
 
 export type ApplicationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2101,6 +2477,8 @@ export type ApplicationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exten
   approvalQueueItems?: boolean | ApplicationCountOutputTypeCountApprovalQueueItemsArgs
   emailApplications?: boolean | ApplicationCountOutputTypeCountEmailApplicationsArgs
   followUps?: boolean | ApplicationCountOutputTypeCountFollowUpsArgs
+  campaignJobs?: boolean | ApplicationCountOutputTypeCountCampaignJobsArgs
+  attempts?: boolean | ApplicationCountOutputTypeCountAttemptsArgs
 }
 
 /**
@@ -2148,6 +2526,20 @@ export type ApplicationCountOutputTypeCountFollowUpsArgs<ExtArgs extends runtime
   where?: Prisma.FollowUpWhereInput
 }
 
+/**
+ * ApplicationCountOutputType without action
+ */
+export type ApplicationCountOutputTypeCountCampaignJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CampaignJobWhereInput
+}
+
+/**
+ * ApplicationCountOutputType without action
+ */
+export type ApplicationCountOutputTypeCountAttemptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ApplicationAttemptWhereInput
+}
+
 
 export type ApplicationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2178,6 +2570,8 @@ export type ApplicationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   approvalQueueItems?: boolean | Prisma.Application$approvalQueueItemsArgs<ExtArgs>
   emailApplications?: boolean | Prisma.Application$emailApplicationsArgs<ExtArgs>
   followUps?: boolean | Prisma.Application$followUpsArgs<ExtArgs>
+  campaignJobs?: boolean | Prisma.Application$campaignJobsArgs<ExtArgs>
+  attempts?: boolean | Prisma.Application$attemptsArgs<ExtArgs>
   _count?: boolean | Prisma.ApplicationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["application"]>
 
@@ -2266,6 +2660,8 @@ export type ApplicationInclude<ExtArgs extends runtime.Types.Extensions.Internal
   approvalQueueItems?: boolean | Prisma.Application$approvalQueueItemsArgs<ExtArgs>
   emailApplications?: boolean | Prisma.Application$emailApplicationsArgs<ExtArgs>
   followUps?: boolean | Prisma.Application$followUpsArgs<ExtArgs>
+  campaignJobs?: boolean | Prisma.Application$campaignJobsArgs<ExtArgs>
+  attempts?: boolean | Prisma.Application$attemptsArgs<ExtArgs>
   _count?: boolean | Prisma.ApplicationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ApplicationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2290,6 +2686,8 @@ export type $ApplicationPayload<ExtArgs extends runtime.Types.Extensions.Interna
     approvalQueueItems: Prisma.$ApprovalQueueItemPayload<ExtArgs>[]
     emailApplications: Prisma.$EmailApplicationPayload<ExtArgs>[]
     followUps: Prisma.$FollowUpPayload<ExtArgs>[]
+    campaignJobs: Prisma.$CampaignJobPayload<ExtArgs>[]
+    attempts: Prisma.$ApplicationAttemptPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2714,6 +3112,8 @@ export interface Prisma__ApplicationClient<T, Null = never, ExtArgs extends runt
   approvalQueueItems<T extends Prisma.Application$approvalQueueItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$approvalQueueItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApprovalQueueItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   emailApplications<T extends Prisma.Application$emailApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$emailApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   followUps<T extends Prisma.Application$followUpsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$followUpsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowUpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  campaignJobs<T extends Prisma.Application$campaignJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$campaignJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CampaignJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attempts<T extends Prisma.Application$attemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$attemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3300,6 +3700,54 @@ export type Application$followUpsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.FollowUpScalarFieldEnum | Prisma.FollowUpScalarFieldEnum[]
+}
+
+/**
+ * Application.campaignJobs
+ */
+export type Application$campaignJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CampaignJob
+   */
+  select?: Prisma.CampaignJobSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CampaignJob
+   */
+  omit?: Prisma.CampaignJobOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CampaignJobInclude<ExtArgs> | null
+  where?: Prisma.CampaignJobWhereInput
+  orderBy?: Prisma.CampaignJobOrderByWithRelationInput | Prisma.CampaignJobOrderByWithRelationInput[]
+  cursor?: Prisma.CampaignJobWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CampaignJobScalarFieldEnum | Prisma.CampaignJobScalarFieldEnum[]
+}
+
+/**
+ * Application.attempts
+ */
+export type Application$attemptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApplicationAttempt
+   */
+  select?: Prisma.ApplicationAttemptSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApplicationAttempt
+   */
+  omit?: Prisma.ApplicationAttemptOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApplicationAttemptInclude<ExtArgs> | null
+  where?: Prisma.ApplicationAttemptWhereInput
+  orderBy?: Prisma.ApplicationAttemptOrderByWithRelationInput | Prisma.ApplicationAttemptOrderByWithRelationInput[]
+  cursor?: Prisma.ApplicationAttemptWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ApplicationAttemptScalarFieldEnum | Prisma.ApplicationAttemptScalarFieldEnum[]
 }
 
 /**

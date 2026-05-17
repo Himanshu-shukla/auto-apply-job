@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDemoUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateAIResponse } from "@/lib/ai";
 import { calculateRuleBasedMatchScore, parsedResumeFromRecord } from "@/lib/services/matchScoring";
@@ -7,7 +7,7 @@ import { calculateRuleBasedMatchScore, parsedResumeFromRecord } from "@/lib/serv
 export const dynamic = "force-dynamic";
 
 export async function POST(_request: Request, { params }: { params: { id: string } }) {
-  const user = await getDemoUser();
+  const user = await getCurrentUser();
   const [job, resume, preferences] = await Promise.all([
     prisma.job.findFirst({ where: { id: params.id, userId: user.id } }),
     prisma.resume.findFirst({ where: { userId: user.id, isActive: true }, orderBy: { createdAt: "desc" } }),

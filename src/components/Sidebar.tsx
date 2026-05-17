@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, BriefcaseBusiness, ChartNoAxesCombined, ClipboardList, FileStack, FileText, Gauge, KeyRound, LayoutDashboard, ListChecks, MailCheck, MessageSquareText, ShieldCheck, Settings2, SlidersHorizontal } from "lucide-react";
+import { Bell, BriefcaseBusiness, ChartNoAxesCombined, ClipboardList, FileStack, FileText, Gauge, KeyRound, LayoutDashboard, ListChecks, MailCheck, MessageSquareText, Send, ShieldCheck, Settings2, SlidersHorizontal } from "lucide-react";
 
 const items = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/resume", label: "Resume", icon: FileText },
   { href: "/preferences", label: "Preferences", icon: Settings2 },
   { href: "/jobs", label: "Jobs", icon: BriefcaseBusiness },
+  { href: "/campaigns", label: "Campaigns", icon: Send },
   { href: "/tracker", label: "Tracker", icon: ListChecks },
   { href: "/automation", label: "Automation", icon: ShieldCheck },
   { href: "/sources", label: "Sources", icon: SlidersHorizontal },
@@ -56,7 +57,7 @@ export function Sidebar() {
         })}
       </nav>
       <div className="mt-auto rounded-md border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">
-        Phase 3 blocks restricted auto-apply and logs every automated action.
+        Bulk queues are review-gated; restricted platforms stay assisted-only.
       </div>
     </aside>
   );

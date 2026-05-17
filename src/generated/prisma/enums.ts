@@ -121,3 +121,39 @@ export const FollowUpStatus = {
 } as const
 
 export type FollowUpStatus = (typeof FollowUpStatus)[keyof typeof FollowUpStatus]
+
+
+export const CampaignStatus = {
+  draft: 'draft',
+  preparing: 'preparing',
+  ready: 'ready',
+  running: 'running',
+  paused: 'paused',
+  completed: 'completed',
+  failed: 'failed'
+} as const
+
+export type CampaignStatus = (typeof CampaignStatus)[keyof typeof CampaignStatus]
+
+
+export const CampaignJobStatus = {
+  queued: 'queued',
+  needs_review: 'needs_review',
+  ready: 'ready',
+  blocked: 'blocked',
+  submitted: 'submitted',
+  failed: 'failed',
+  skipped: 'skipped'
+} as const
+
+export type CampaignJobStatus = (typeof CampaignJobStatus)[keyof typeof CampaignJobStatus]
+
+
+export const ApplicationAttemptStatus = {
+  pending: 'pending',
+  blocked: 'blocked',
+  submitted: 'submitted',
+  failed: 'failed'
+} as const
+
+export type ApplicationAttemptStatus = (typeof ApplicationAttemptStatus)[keyof typeof ApplicationAttemptStatus]

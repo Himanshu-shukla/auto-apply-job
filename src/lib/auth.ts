@@ -11,3 +11,5 @@ export async function getDemoUser() {
     }
   });
 }
+
+export const getCurrentUser = getDemoUser;

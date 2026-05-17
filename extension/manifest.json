@@ -4,7 +4,7 @@
   "version": "0.2.0",
   "description": "Assisted apply helper for capturing jobs, previewing field mappings, and filling selected application fields with user confirmation.",
   "permissions": ["activeTab", "storage", "scripting"],
-  "host_permissions": ["http://localhost:3000/*", "https://*/*", "http://*/*"],
+  "host_permissions": ["http://localhost:3000/*"],
   "action": {
     "default_title": "Job Copilot",
     "default_popup": "popup.html"

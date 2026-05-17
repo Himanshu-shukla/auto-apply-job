@@ -147,6 +147,14 @@ const sampleJobs: NormalizedJob[] = [
 
 export class MockJobProvider implements JobProvider<NormalizedJob> {
   sourceName = "MockJobs";
+  capabilities = {
+    canSearch: true,
+    canCapture: true,
+    canAssistedApply: true,
+    canSubmit: false,
+    requiresCredential: false,
+    restrictedReason: "Mock jobs are for local testing and cannot be submitted."
+  };
 
   async searchJobs(preferences: JobPreferenceInput): Promise<NormalizedJob[]> {
     const terms = [

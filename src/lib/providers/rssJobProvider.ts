@@ -4,6 +4,14 @@ import { defaultAutomationLevel } from "@/lib/services/sourcePolicy";
 
 export class RSSJobProvider implements JobProvider {
   sourceName = "RSSJobFeed";
+  capabilities = {
+    canSearch: true,
+    canCapture: true,
+    canAssistedApply: true,
+    canSubmit: false,
+    requiresCredential: false,
+    restrictedReason: "RSS feeds can source jobs, but applications happen on the destination site."
+  };
 
   async searchJobs(preferences: JobPreferenceInput): Promise<NormalizedJob[]> {
     const feeds = (process.env.JOB_RSS_FEEDS ?? "").split(",").map((item) => item.trim()).filter(Boolean);
