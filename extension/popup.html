@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Job Copilot</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Job Copilot</h1>
+        <p id="status">Not connected</p>
+      </div>
+      <button id="refresh" title="Refresh page detection">↻</button>
+    </header>
+
+    <nav class="tabs" aria-label="Popup tabs">
+      <button class="tab active" data-tab="connect">Connect</button>
+      <button class="tab" data-tab="job">Current Job</button>
+      <button class="tab" data-tab="autofill">Autofill</button>
+      <button class="tab" data-tab="answers">Answers</button>
+      <button class="tab" data-tab="tracker">Tracker</button>
+    </nav>
+
+    <main>
+      <section id="connect" class="panel active">
+        <label>Backend URL</label>
+        <input id="baseUrl" placeholder="http://localhost:3000" />
+        <label>Extension API token</label>
+        <input id="token" type="password" placeholder="Paste token from web app" />
+        <div class="row">
+          <button id="saveToken" class="primary">Connect</button>
+          <button id="clearToken">Disconnect</button>
+        </div>
+        <p class="hint">Tokens are stored in chrome.storage.local. Passwords are never stored or filled.</p>
+      </section>
+
+      <section id="job" class="panel">
+        <div id="jobSummary" class="summary"></div>
+        <div class="row">
+          <button id="saveJob" class="primary">Save Job</button>
+          <button id="matchJob">Match</button>
+        </div>
+        <div id="resumeHelp" class="notice"></div>
+      </section>
+
+      <section id="autofill" class="panel">
+        <div class="row spaced">
+          <strong id="fieldCount">0 fields</strong>
+          <button id="saveMapping">Save Mapping</button>
+        </div>
+        <div id="fields"></div>
+        <button id="autofillSelected" class="primary wide">Autofill Selected</button>
+        <p class="hint">No submit buttons are clicked. Review every field before submitting manually.</p>
+      </section>
+
+      <section id="answers" class="panel">
+        <label>Tone</label>
+        <select id="tone">
+          <option value="professional">Professional</option>
+          <option value="concise">Concise</option>
+          <option value="confident">Confident</option>
+        </select>
+        <div id="questions"></div>
+      </section>
+
+      <section id="tracker" class="panel">
+        <label>Notes</label>
+        <textarea id="notes" placeholder="Application notes"></textarea>
+        <label>Follow-up date</label>
+        <input id="followUpDate" type="date" />
+        <div class="row">
+          <button id="markSaved">Mark Saved</button>
+          <button id="markApplied" class="primary">Mark Applied</button>
+        </div>
+        <p class="hint">Use Mark Applied only after you submit the application yourself.</p>
+      </section>
+    </main>
+
+    <footer id="message"></footer>
+    <script src="popup.js"></script>
+  </body>
+</html>

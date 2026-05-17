@@ -1,0 +1,143 @@
+openapi: 3.1.0
+info:
+  title: AI Job Application Copilot Launch Contract
+  version: 0.1.0
+servers:
+  - url: http://localhost:3000
+security:
+  - WebSession: []
+components:
+  securitySchemes:
+    WebSession:
+      type: apiKey
+      in: cookie
+      name: session
+    ExtensionBearer:
+      type: http
+      scheme: bearer
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    ExtensionJobCapture:
+      type: object
+      required: [title, company, description, applyUrl]
+      properties:
+        title: { type: string, maxLength: 200 }
+        company: { type: string, maxLength: 200 }
+        location: { type: string, maxLength: 200 }
+        description: { type: string, maxLength: 12000 }
+        applyUrl:
+          type: string
+          format: uri
+          not:
+            pattern: "^javascript:"
+        pageUrl:
+          type: string
+          format: uri
+        sourcePlatform: { type: string, maxLength: 120 }
+    GeneratedAnswerRequest:
+      type: object
+      required: [question]
+      properties:
+        question: { type: string, minLength: 1, maxLength: 1000 }
+        fieldLimit: { type: integer, minimum: 40, maximum: 4000 }
+        tone:
+          enum: [professional, concise, confident]
+        jobId: { type: string }
+        jobDescription: { type: string, maxLength: 12000 }
+    GeneratedAnswerResponse:
+      type: object
+      required: [answer, needsConfirmation, reason, questionType]
+      properties:
+        answer: { type: string }
+        needsConfirmation: { type: boolean }
+        reason: { type: string }
+        questionType: { type: string }
+paths:
+  /api/jobs:
+    get:
+      summary: List authenticated user's jobs
+      responses:
+        "200": { description: Jobs returned }
+        "401": { description: Missing web session, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/resume/upload:
+    post:
+      summary: Upload a resume with strict type and size validation
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200": { description: Resume parsed }
+        "400": { description: Invalid file }
+        "413": { description: File too large }
+        "401": { description: Missing web session }
+  /api/extension/profile:
+    get:
+      security:
+        - ExtensionBearer: []
+      summary: Get extension profile context
+      responses:
+        "200": { description: Profile returned }
+        "401": { description: Missing, invalid, or revoked extension token }
+        "429": { description: Extension rate limited }
+  /api/extension/capture-job:
+    post:
+      security:
+        - ExtensionBearer: []
+      summary: Capture a job from a browser page
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExtensionJobCapture"
+      responses:
+        "200": { description: Job captured }
+        "400": { description: Invalid payload or URL }
+        "401": { description: Missing, invalid, or revoked token }
+        "429": { description: Rate limited }
+  /api/extension/generate-answer:
+    post:
+      security:
+        - ExtensionBearer: []
+      summary: Generate a truthful application answer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneratedAnswerRequest"
+      responses:
+        "200":
+          description: Answer generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneratedAnswerResponse"
+        "400": { description: Invalid question }
+        "401": { description: Missing, invalid, or revoked token }
+        "429": { description: Rate limited }
+  /api/applications/{id}/email/send:
+    post:
+      summary: Send approved direct email application
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Email sent }
+        "400": { description: Missing approval, cooldown, daily limit, or invalid state }
+        "401": { description: Missing web session }

@@ -1,0 +1,133 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - link "Job Copilot Assisted Apply" [ref=e4] [cursor=pointer]:
+      - /url: /dashboard
+      - img [ref=e6]
+      - generic [ref=e9]:
+        - generic [ref=e10]: Job Copilot
+        - generic [ref=e11]: Assisted Apply
+    - navigation [ref=e12]:
+      - link "Dashboard" [ref=e13] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e14]
+        - text: Dashboard
+      - link "Resume" [ref=e19] [cursor=pointer]:
+        - /url: /resume
+        - img [ref=e20]
+        - text: Resume
+      - link "Preferences" [ref=e23] [cursor=pointer]:
+        - /url: /preferences
+        - img [ref=e24]
+        - text: Preferences
+      - link "Jobs" [ref=e27] [cursor=pointer]:
+        - /url: /jobs
+        - img [ref=e28]
+        - text: Jobs
+      - link "Tracker" [ref=e32] [cursor=pointer]:
+        - /url: /tracker
+        - img [ref=e33]
+        - text: Tracker
+      - link "Automation" [ref=e36] [cursor=pointer]:
+        - /url: /automation
+        - img [ref=e37]
+        - text: Automation
+      - link "Sources" [ref=e40] [cursor=pointer]:
+        - /url: /sources
+        - img [ref=e41]
+        - text: Sources
+      - link "Approvals" [ref=e42] [cursor=pointer]:
+        - /url: /approval-queue
+        - img [ref=e43]
+        - text: Approvals
+      - link "Analytics" [ref=e47] [cursor=pointer]:
+        - /url: /analytics
+        - img [ref=e48]
+        - text: Analytics
+      - link "Versions" [ref=e50] [cursor=pointer]:
+        - /url: /resume-versions
+        - img [ref=e51]
+        - text: Versions
+      - link "Follow-ups" [ref=e56] [cursor=pointer]:
+        - /url: /follow-ups
+        - img [ref=e57]
+        - text: Follow-ups
+      - link "Notifications" [ref=e61] [cursor=pointer]:
+        - /url: /notifications
+        - img [ref=e62]
+        - text: Notifications
+      - link "Audit" [ref=e65] [cursor=pointer]:
+        - /url: /audit-logs
+        - img [ref=e66]
+        - text: Audit
+      - link "Answers" [ref=e69] [cursor=pointer]:
+        - /url: /answer-templates
+        - img [ref=e70]
+        - text: Answers
+      - link "Extension" [ref=e72] [cursor=pointer]:
+        - /url: /settings/extension
+        - img [ref=e73]
+        - text: Extension
+      - link "Auto Settings" [ref=e76] [cursor=pointer]:
+        - /url: /settings/automation
+        - img [ref=e77]
+        - text: Auto Settings
+      - link "Email Settings" [ref=e80] [cursor=pointer]:
+        - /url: /settings/email
+        - img [ref=e81]
+        - text: Email Settings
+    - generic [ref=e85]: Phase 3 blocks restricted auto-apply and logs every automated action.
+  - main [ref=e86]:
+    - generic [ref=e88]:
+      - heading "Dashboard" [level=1] [ref=e89]
+      - paragraph [ref=e90]: Your resume, preferences, job matches, and application pipeline in one quiet operating room.
+    - generic [ref=e91]:
+      - link "Active Resume Missing" [ref=e92] [cursor=pointer]:
+        - /url: /resume
+        - generic [ref=e93]:
+          - generic [ref=e94]: Active Resume
+          - img [ref=e95]
+        - generic [ref=e98]: Missing
+      - link "Target Role Set preferences" [ref=e99] [cursor=pointer]:
+        - /url: /preferences
+        - generic [ref=e100]:
+          - generic [ref=e101]: Target Role
+          - img [ref=e102]
+        - generic [ref=e106]: Set preferences
+      - link "Jobs Found 0" [ref=e107] [cursor=pointer]:
+        - /url: /jobs
+        - generic [ref=e108]:
+          - generic [ref=e109]: Jobs Found
+          - img [ref=e110]
+        - generic [ref=e114]: "0"
+      - link "Best Score 0/100" [ref=e115] [cursor=pointer]:
+        - /url: /jobs
+        - generic [ref=e116]:
+          - generic [ref=e117]: Best Score
+          - img [ref=e118]
+        - generic [ref=e120]: 0/100
+    - generic [ref=e121]:
+      - generic [ref=e122]:
+        - generic [ref=e123]:
+          - heading "Top Matches" [level=2] [ref=e124]
+          - link "View all" [ref=e125] [cursor=pointer]:
+            - /url: /jobs
+        - paragraph [ref=e127]: Save preferences and run Find Jobs to populate matches.
+      - generic [ref=e128]:
+        - heading "Phase 1 Flow" [level=2] [ref=e129]
+        - generic [ref=e130]:
+          - link "Upload and edit parsed resume" [ref=e131] [cursor=pointer]:
+            - /url: /resume
+            - generic [ref=e132]: Upload and edit parsed resume
+            - img [ref=e133]
+          - link "Save search preferences" [ref=e135] [cursor=pointer]:
+            - /url: /preferences
+            - generic [ref=e136]: Save search preferences
+            - img [ref=e137]
+          - link "Find and score jobs" [ref=e139] [cursor=pointer]:
+            - /url: /jobs
+            - generic [ref=e140]: Find and score jobs
+            - img [ref=e141]
+          - link "Move applications through tracker" [ref=e143] [cursor=pointer]:
+            - /url: /tracker
+            - generic [ref=e144]: Move applications through tracker
+            - img [ref=e145]

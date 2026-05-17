@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "AI Job Application Copilot",
+  "version": "0.2.0",
+  "description": "Assisted apply helper for capturing jobs, previewing field mappings, and filling selected application fields with user confirmation.",
+  "permissions": ["activeTab", "storage", "scripting"],
+  "host_permissions": ["http://localhost:3000/*", "https://*/*", "http://*/*"],
+  "action": {
+    "default_title": "Job Copilot",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
