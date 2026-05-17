@@ -108,7 +108,7 @@ Greenhouse, Lever, and Ashby search adapters use official public ATS endpoints w
 6. Use the extension **Current Job** tab to capture the job and generate a match score.
 7. Use **Autofill** to inspect detected fields, adjust mappings, and fill selected fields only.
 8. Use **Answers** to generate short, truthful answers for custom questions, edit them, then insert them.
-9. For resume upload fields, download the recommended resume and manually select it in the browser file picker.
+9. For resume upload fields, click **Attach Resume** to try browser-supported file attachment from your saved resume. If the site blocks it, download the recommended resume and manually select it in the browser file picker.
 10. Use **Safe Next** for allowed multi-step forms after reviewing each page.
 11. Use **Policy Submit** only when the saved job's source policy allows one-click apply; otherwise submit manually.
 12. Use **Tracker** in the extension to mark the application as applied when you submit yourself.
@@ -124,7 +124,7 @@ Greenhouse, Lever, and Ashby search adapters use official public ATS endpoints w
 - Company career pages can use one-click apply only when the user explicitly marks the domain as allowed.
 - No automatic third-party submit clicks unless source policy explicitly allows that workflow.
 - Campaign attempts record pending, submitted, failed, and blocked states for retry/audit visibility.
-- No password, OTP, CAPTCHA, SSN, or payment fields are filled.
+- No password, OTP, CAPTCHA, SSN, payment fields, or verification steps are filled or bypassed.
 - Autofill requires a visible preview and a user click.
 - Application answers must not fabricate experience. Sensitive answers such as work authorization and relocation are marked for confirmation when not explicitly known.
 - Autofill logs store field labels and mapping keys only, not filled values.
@@ -239,6 +239,7 @@ Rule-based mapping lives in `src/lib/services/fieldMapping.ts` and the extension
 - Disable automation globally at `/settings/automation` and verify automated sends are blocked.
 - Greenhouse form: detect name, email, phone, resume upload, open-ended questions.
 - Lever form: capture title/company/location, save job, generate match score, detect resume upload.
+- LinkedIn/Indeed/ZipRecruiter assisted forms: detect platform-specific fields and resume upload, block final submit, and stop on CAPTCHA/login/verification steps.
 - Workday-style form: detect visible fields without touching password or login fields.
 - Generic company career page: capture job details from `h1`, visible company/location text, and body description.
 - Manual job paste: import through `/jobs`, generate match, cover letter, and tracker card.

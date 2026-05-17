@@ -54,6 +54,33 @@ test("allows direct email auto-send only after source approval", () => {
   assert.equal(approved, "auto_send_email");
 });
 
+test("allows one-click submit only for explicitly allowed company career pages", () => {
+  const unapproved = enforceSourceAutomationLevel({ sourceType: "company_career_page", requestedLevel: "one_click_apply" });
+  const approved = enforceSourceAutomationLevel({
+    sourceType: "company_career_page",
+    requestedLevel: "one_click_apply",
+    companyDomainAllowed: true
+  });
+
+  assert.equal(unapproved, "assisted_apply");
+  assert.equal(approved, "one_click_apply");
+  assert.equal(isAutomationAllowed(unapproved, "one_click_apply"), false);
+  assert.equal(isAutomationAllowed(approved, "one_click_apply"), true);
+});
+
+test("restricted job boards stay assisted-only even when submit is requested", () => {
+  for (const applyUrl of [
+    "https://www.linkedin.com/jobs/view/123",
+    "https://www.indeed.com/viewjob?jk=123",
+    "https://www.ziprecruiter.com/jobs/example"
+  ]) {
+    const sourceType = classifySource({ source: "Job board", applyUrl, description: "Apply on platform" });
+    const level = enforceSourceAutomationLevel({ sourceType, requestedLevel: "one_click_apply", companyDomainAllowed: true });
+    assert.equal(sourceType, "restricted_platform");
+    assert.equal(level, "assisted_apply");
+  }
+});
+
 test("evaluates generated application risk for unsafe sources", () => {
   const risk = evaluateAutomationRisk({ sourceType: "unknown", automationLevel: "save_only", description: "Visa sponsorship question" }, { body: "Hello" }, "unknown");
   assert.equal(risk.riskLevel, "high");

@@ -1,6 +1,8 @@
 const DEFAULT_BASE_URL = "http://localhost:3000";
 const profileKeys = [
   ["unknown", "Skip / Unknown"],
+  ["firstName", "First name"],
+  ["lastName", "Last name"],
   ["fullName", "Full name"],
   ["email", "Email"],
   ["phone", "Phone"],
@@ -24,6 +26,7 @@ const state = {
   token: "",
   profile: null,
   resumes: [],
+  selectedResumeId: "",
   page: null,
   capturedJob: null,
   application: null,
@@ -92,10 +95,13 @@ async function clearToken() {
 async function loadProfile() {
   try {
     const data = await api("/api/extension/profile");
+    const resumeData = await api("/api/extension/resumes").catch(() => ({ resumes: data.resume ? [data.resume] : [] }));
     state.profile = data.profile;
-    state.resumes = data.resume ? [data.resume] : [];
+    state.resumes = resumeData.resumes || (data.resume ? [data.resume] : []);
+    state.selectedResumeId = state.resumes.find((resume) => resume.isActive)?.id || state.resumes[0]?.id || "";
     updateStatus();
     renderFields();
+    renderResumeHelp();
     message("Connected to web app profile.");
   } catch (error) {
     message(error.message);
@@ -302,7 +308,7 @@ function renderJob(match) {
 
 function renderResumeHelp() {
   const upload = state.page?.fields?.find((field) => field.profileKey === "resumeUpload");
-  const resume = state.resumes?.[0];
+  const resume = selectedResume();
   const element = document.getElementById("resumeHelp");
   if (!upload) {
     element.textContent = "";
@@ -311,8 +317,25 @@ function renderResumeHelp() {
   }
   element.style.display = "block";
   element.innerHTML = resume
-    ? `Resume upload detected. Recommended version: <strong>${escapeHtml(resume.fileName)}</strong>. <a href="${escapeAttribute(state.baseUrl + resume.downloadUrl)}" target="_blank">Download resume</a>, then manually select it in the upload field.`
+    ? `
+      <div><strong>Resume upload detected.</strong></div>
+      <label for="resumeSelect">Resume</label>
+      <select id="resumeSelect">
+        ${state.resumes.map((item) => `<option value="${escapeAttribute(item.id)}" ${item.id === resume.id ? "selected" : ""}>${escapeHtml(item.fileName)}${item.isActive ? " · active" : ""}</option>`).join("")}
+      </select>
+      <div class="row">
+        <button id="attachResume" class="primary">Attach Resume</button>
+        <a class="button-link" href="${escapeAttribute(absoluteUrl(resume.downloadUrl))}" target="_blank">Download</a>
+      </div>
+      <p class="hint">If the site blocks attachment, use Download and select the file manually.</p>
+    `
     : "Resume upload detected. Upload or activate a resume in the web app, then manually select the file here.";
+  const select = document.getElementById("resumeSelect");
+  select?.addEventListener("change", (event) => {
+    state.selectedResumeId = event.target.value;
+    renderResumeHelp();
+  });
+  document.getElementById("attachResume")?.addEventListener("click", () => attachSelectedResume(upload));
 }
 
 function renderFields() {
@@ -341,6 +364,28 @@ function renderFields() {
       card.querySelector(".preview").value = valueFor(next);
     });
     container.appendChild(card);
+  }
+}
+
+async function attachSelectedResume(uploadField) {
+  const resume = selectedResume();
+  if (!resume) return message("Choose a resume first.");
+  try {
+    const payload = await fetchResumePayload(resume);
+    const result = await sendToTab({ type: "ATTACH_RESUME", selector: uploadField?.selector, resume: payload });
+    const logItem = { label: uploadField?.label || "Resume upload", profileKey: "resumeUpload", filled: Boolean(result.attached) };
+    if (result.attached) {
+      state.filledFields = [...state.filledFields, logItem];
+      message(`Attached ${result.fileName || resume.fileName}. Review before submitting.`);
+    } else {
+      state.skippedFields = [...state.skippedFields, { ...logItem, filled: false, reason: result.reason || "Resume attachment failed." }];
+      message(result.reason || "Resume attachment failed. Download and select it manually.");
+    }
+    if (!state.capturedJob) await saveJob();
+    await saveApplicationLog();
+  } catch (error) {
+    state.skippedFields = [...state.skippedFields, { label: uploadField?.label || "Resume upload", profileKey: "resumeUpload", filled: false, reason: error.message }];
+    message(error.message);
   }
 }
 
@@ -379,10 +424,28 @@ function renderQuestions() {
 
 function valueFor(key) {
   if (!state.profile) return "";
+  if (key === "firstName") return splitName().firstName;
+  if (key === "lastName") return splitName().lastName;
   const value = state.profile[key];
   if (Array.isArray(value)) return value.join(", ");
   if (value === null || value === undefined) return "";
   return String(value);
+}
+
+function selectedResume() {
+  return state.resumes.find((resume) => resume.id === state.selectedResumeId) || state.resumes[0] || null;
+}
+
+async function fetchResumePayload(resume) {
+  if (!resume.downloadUrl) throw new Error("Selected resume has no downloadable file. Download and select it manually.");
+  const response = await fetch(absoluteUrl(resume.downloadUrl));
+  if (!response.ok) throw new Error("Could not fetch the selected resume. Download and select it manually.");
+  const buffer = await response.arrayBuffer();
+  return {
+    fileName: resume.fileName || "resume.pdf",
+    fileType: resume.fileType || response.headers.get("Content-Type") || "application/pdf",
+    contentBase64: arrayBufferToBase64(buffer)
+  };
 }
 
 function finalSubmitPolicy() {
@@ -451,6 +514,30 @@ function updateStatus() {
 
 function normalizeBaseUrl(value) {
   return value.replace(/\/+$/, "");
+}
+
+function absoluteUrl(path) {
+  if (/^https?:\/\//i.test(path || "")) return path;
+  return `${state.baseUrl}${path || ""}`;
+}
+
+function splitName() {
+  const parts = String(state.profile?.fullName || "").trim().split(/\s+/).filter(Boolean);
+  return {
+    firstName: parts[0] || "",
+    lastName: parts.length > 1 ? parts.slice(1).join(" ") : ""
+  };
+}
+
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    const chunk = bytes.subarray(index, index + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  return btoa(binary);
 }
 
 function cssEscape(value) {

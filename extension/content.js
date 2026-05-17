@@ -1,4 +1,6 @@
 const PROFILE_KEYS = [
+  "firstName",
+  "lastName",
   "fullName",
   "email",
   "phone",
@@ -15,10 +17,65 @@ const PROFILE_KEYS = [
   "workAuthorization"
 ];
 
+const PLATFORM_ADAPTERS = [
+  {
+    id: "linkedin",
+    name: "LinkedIn Easy Apply",
+    hostPattern: /(^|\.)linkedin\.com$/i,
+    sourcePlatform: "LinkedIn",
+    formSelectors: [".jobs-easy-apply-modal", "[data-test-modal]", ".artdeco-modal", "form"],
+    safeNext: /\b(next|review|continue)\b/i,
+    finalSubmitBlockedReason: "LinkedIn is a restricted platform; review and submit manually.",
+    map(field, base) {
+      const text = fieldText(field);
+      if (/\bfirst\s+name\b/.test(text)) return mapping("firstName", 98, "LinkedIn first name field.");
+      if (/\blast\s+name\b/.test(text)) return mapping("lastName", 98, "LinkedIn last name field.");
+      if (/\bmobile\s+phone|phone\s+number\b/.test(text)) return mapping("phone", 97, "LinkedIn phone field.");
+      if (/\bresume|cv|upload resume\b/.test(text) || field.type === "file") return mapping("resumeUpload", 99, "LinkedIn resume upload detected.");
+      return base;
+    }
+  },
+  {
+    id: "indeed",
+    name: "Indeed Apply",
+    hostPattern: /(^|\.)indeed\.com$/i,
+    sourcePlatform: "Indeed",
+    formSelectors: ["[data-testid*='ApplyForm']", "[class*='ia-']", "form"],
+    safeNext: /\b(continue|next|review)\b/i,
+    finalSubmitBlockedReason: "Indeed is a restricted platform; review and submit manually.",
+    map(field, base) {
+      const text = fieldText(field);
+      if (/\bfirst\s+name\b/.test(text)) return mapping("firstName", 98, "Indeed first name field.");
+      if (/\blast\s+name\b/.test(text)) return mapping("lastName", 98, "Indeed last name field.");
+      if (/\bresume|cv|upload|replace resume\b/.test(text) || field.type === "file") return mapping("resumeUpload", 99, "Indeed resume upload detected.");
+      if (/\bwork authorization|authorized to work|sponsorship\b/.test(text)) return mapping("workAuthorization", 92, "Indeed work authorization field.");
+      return base;
+    }
+  },
+  {
+    id: "ziprecruiter",
+    name: "ZipRecruiter Apply",
+    hostPattern: /(^|\.)ziprecruiter\.com$/i,
+    sourcePlatform: "ZipRecruiter",
+    formSelectors: ["[class*='apply']", "[id*='apply']", "form"],
+    safeNext: /\b(next|continue|review)\b/i,
+    finalSubmitBlockedReason: "ZipRecruiter is a restricted platform; review and submit manually.",
+    map(field, base) {
+      const text = fieldText(field);
+      if (/\bfirst\s+name\b/.test(text)) return mapping("firstName", 98, "ZipRecruiter first name field.");
+      if (/\blast\s+name\b/.test(text)) return mapping("lastName", 98, "ZipRecruiter last name field.");
+      if (/\bresume|cv|upload|attach\b/.test(text) || field.type === "file") return mapping("resumeUpload", 99, "ZipRecruiter resume upload detected.");
+      if (/\bdesired pay|desired salary|salary expectation\b/.test(text)) return mapping("expectedSalary", 92, "ZipRecruiter salary field.");
+      return base;
+    }
+  }
+];
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   try {
     if (message.type === "DETECT_PAGE") sendResponse(detectPage());
     if (message.type === "FILL_FIELDS") sendResponse(fillFields(message.fields || []));
+    if (message.type === "ATTACH_RESUME") sendResponse(attachResume(message.resume || {}, message.selector));
     if (message.type === "INSERT_ANSWER") sendResponse(insertAnswer(message.selector, message.answer));
     if (message.type === "CLICK_SAFE_NEXT") sendResponse(clickSafeNext());
     if (message.type === "CLICK_FINAL_SUBMIT") sendResponse(clickFinalSubmit(message.policy || {}));
@@ -29,11 +86,13 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 });
 
 function detectPage() {
+  const adapter = currentAdapter();
   const fields = detectFields();
   const job = extractJob();
   return {
     url: location.href,
-    sourcePlatform: inferSourcePlatform(location.href),
+    sourcePlatform: adapter?.sourcePlatform || inferSourcePlatform(location.href),
+    adapter: adapter?.name || "Generic",
     job,
     fields,
     questions: fields.filter((field) => field.profileKey === "customQuestion" || field.tagName === "textarea"),
@@ -43,13 +102,16 @@ function detectPage() {
 }
 
 function detectFields() {
-  const inputs = Array.from(document.querySelectorAll("input, textarea, select"));
+  const adapter = currentAdapter();
+  const root = adapterRoot(adapter);
+  const inputs = Array.from(root.querySelectorAll("input, textarea, select"));
   return inputs
     .filter(isVisibleField)
     .filter((field) => !isUnsafeField(field))
     .map((field, index) => {
       const detected = describeField(field, index);
-      return { ...detected, ...mapField(detected) };
+      const baseMapping = mapField(detected);
+      return { ...detected, ...(adapter?.map(detected, baseMapping) || baseMapping), adapter: adapter?.name || "Generic" };
     });
 }
 
@@ -80,10 +142,9 @@ function describeField(field, index) {
 }
 
 function mapField(field) {
-  const text = [field.label, field.placeholder, field.name, field.id, field.nearbyText, field.type, (field.options || []).join(" ")]
-    .join(" ")
-    .replace(/[_-]+/g, " ")
-    .toLowerCase();
+  const text = fieldText(field);
+  if (/\bfirst\s+name\b/.test(text)) return mapping("firstName", 97, "First name field.");
+  if (/\blast\s+name\b/.test(text)) return mapping("lastName", 97, "Last name field.");
   if (field.type === "file" || /\b(upload|resume|cv)\b/.test(text)) return mapping("resumeUpload", 99, "Resume upload detected.");
   if (field.type === "email" || /\be-?mail\b/.test(text)) return mapping("email", 99, "Email field.");
   if (field.type === "tel" || /\b(phone|mobile|contact number)\b/.test(text)) return mapping("phone", 96, "Phone field.");
@@ -127,6 +188,30 @@ function fillFields(fields) {
   return { filled, skipped };
 }
 
+function attachResume(resume, selector) {
+  const blocker = automationBlocker();
+  if (blocker) return { attached: false, blocked: true, reason: blocker };
+  const input = findResumeInput(selector);
+  if (!input) return { attached: false, blocked: false, reason: "No visible resume file input found. Use the site's file picker manually." };
+  if (!resume?.fileName || !resume?.contentBase64) {
+    return { attached: false, blocked: false, reason: "Resume file data was not available. Download and select it manually." };
+  }
+  try {
+    const file = new File([base64ToBytes(resume.contentBase64)], resume.fileName, { type: resume.fileType || "application/pdf" });
+    const transfer = new DataTransfer();
+    transfer.items.add(file);
+    input.files = transfer.files;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    const attached = input.files?.length > 0;
+    return attached
+      ? { attached: true, fileName: resume.fileName, selector: stableSelector(input, 0) }
+      : { attached: false, blocked: false, reason: "The site did not accept programmatic file attachment. Use the file picker manually." };
+  } catch (_error) {
+    return { attached: false, blocked: false, reason: "The site blocked programmatic file attachment. Use the file picker manually." };
+  }
+}
+
 function insertAnswer(selector, answer) {
   const element = document.querySelector(selector);
   if (!element || isUnsafeField(element)) return { inserted: false };
@@ -137,7 +222,8 @@ function insertAnswer(selector, answer) {
 function clickSafeNext() {
   const blocker = automationBlocker();
   if (blocker) return { clicked: false, blocked: true, reason: blocker };
-  const button = findButton(/\b(next|continue|save and continue|review|proceed)\b/i, /\b(submit|apply|send application|finish)\b/i);
+  const adapter = currentAdapter();
+  const button = findButton(adapter?.safeNext || /\b(next|continue|save and continue|review|proceed)\b/i, /\b(submit|apply|send application|finish)\b/i);
   if (!button) return { clicked: false, blocked: false, reason: "No safe next button found." };
   button.click();
   return { clicked: true, blocked: false, label: button.innerText || button.value || "Next" };
@@ -146,6 +232,8 @@ function clickSafeNext() {
 function clickFinalSubmit(policy) {
   const blocker = automationBlocker();
   if (blocker) return { clicked: false, blocked: true, reason: blocker };
+  const adapter = currentAdapter();
+  if (adapter?.finalSubmitBlockedReason) return { clicked: false, blocked: true, reason: adapter.finalSubmitBlockedReason };
   if (!policy.finalSubmitAllowed) return { clicked: false, blocked: true, reason: policy.reason || "Source policy blocks final auto-submit." };
   if (/restricted_platform|unknown/i.test(policy.sourceType || "")) {
     return { clicked: false, blocked: true, reason: "Restricted or unknown sources require assisted apply only." };
@@ -220,6 +308,7 @@ function inferSourcePlatform(url) {
   if (/workday/i.test(host)) return "Workday";
   if (/linkedin/i.test(host)) return "LinkedIn";
   if (/indeed/i.test(host)) return "Indeed";
+  if (/ziprecruiter/i.test(host)) return "ZipRecruiter";
   if (/glassdoor/i.test(host)) return "Glassdoor";
   if (/naukri/i.test(host)) return "Naukri";
   return host || "Current Page";
@@ -234,16 +323,26 @@ function isVisibleField(field) {
 function isUnsafeField(field) {
   const type = (field.getAttribute("type") || "").toLowerCase();
   const text = [field.name, field.id, getLabel(field), field.placeholder].join(" ").toLowerCase();
-  return ["password", "hidden", "submit", "button", "reset"].includes(type) || /\b(password|otp|captcha|ssn|social security|credit card|payment)\b/.test(text);
+  return ["password", "hidden", "submit", "button", "reset"].includes(type) || /\b(password|otp|one-time|captcha|ssn|social security|credit card|payment|card number|cvv)\b/.test(text);
 }
 
 function automationBlocker() {
   const text = document.body.innerText.toLowerCase();
-  if (/\bcaptcha|recaptcha|hcaptcha\b/.test(text) || document.querySelector("[class*='captcha'], [id*='captcha'], iframe[src*='captcha']")) return "CAPTCHA detected.";
-  if (/\b(sign in|log in|login|create account|verify email|otp|one-time code)\b/.test(text)) return "Login or verification step detected.";
-  const unsafe = Array.from(document.querySelectorAll("input, textarea, select")).find((field) => isVisibleField(field) && isSensitiveRequired(field));
-  if (unsafe) return "Sensitive required field detected.";
+  if (/\bcaptcha|recaptcha|hcaptcha|i am not a robot\b/.test(text) || document.querySelector("[class*='captcha'], [id*='captcha'], iframe[src*='captcha'], iframe[src*='recaptcha'], iframe[src*='hcaptcha']")) return "CAPTCHA detected.";
+  if (/\b(sign in|log in|login|create account|verify email|verify your email|otp|one-time code|verification code|two-factor|2fa)\b/.test(text)) return "Login or verification step detected.";
+  const unsafe = Array.from(document.querySelectorAll("input, textarea, select")).find((field) => isVisibleField(field) && isUnsafeAutomationField(field));
+  if (unsafe) return "Sensitive or protected field detected.";
   return "";
+}
+
+function isUnsafeAutomationField(field) {
+  const type = (field.getAttribute("type") || "").toLowerCase();
+  const text = [field.name, field.id, getLabel(field), field.placeholder, nearbyText(field)].join(" ").toLowerCase();
+  return (
+    type === "password" ||
+    /\b(password|otp|one-time|verification code|captcha|ssn|social security|date of birth|dob|credit card|payment|card number|cvv|bank account)\b/.test(text) ||
+    isSensitiveRequired(field)
+  );
 }
 
 function isSensitiveRequired(field) {
@@ -296,4 +395,42 @@ function stableSelector(field, index) {
   if (field.name) return `${field.tagName.toLowerCase()}[name="${CSS.escape(field.name)}"]`;
   field.dataset.jobCopilotField = field.dataset.jobCopilotField || String(index);
   return `[data-job-copilot-field="${field.dataset.jobCopilotField}"]`;
+}
+
+function currentAdapter() {
+  const host = location.hostname.replace(/^www\./, "");
+  return PLATFORM_ADAPTERS.find((adapter) => adapter.hostPattern.test(host)) || null;
+}
+
+function adapterRoot(adapter) {
+  if (!adapter) return document;
+  for (const selector of adapter.formSelectors) {
+    const element = document.querySelector(selector);
+    if (element) return element;
+  }
+  return document;
+}
+
+function fieldText(field) {
+  return [field.label, field.placeholder, field.name, field.id, field.nearbyText, field.type, (field.options || []).join(" ")]
+    .join(" ")
+    .replace(/[_-]+/g, " ")
+    .toLowerCase();
+}
+
+function findResumeInput(selector) {
+  const selected = selector ? document.querySelector(selector) : null;
+  if (selected?.tagName === "INPUT" && selected.type === "file" && isVisibleField(selected) && !isUnsafeField(selected)) return selected;
+  return Array.from(document.querySelectorAll("input[type='file']")).find((field) => {
+    if (!isVisibleField(field) || isUnsafeField(field)) return false;
+    const text = [getLabel(field), field.name, field.id, field.getAttribute("accept"), nearbyText(field)].join(" ").toLowerCase();
+    return /\b(resume|cv|curriculum vitae|upload|attach)\b/.test(text);
+  });
+}
+
+function base64ToBytes(value) {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return bytes;
 }

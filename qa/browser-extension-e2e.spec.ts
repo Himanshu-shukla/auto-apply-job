@@ -61,6 +61,116 @@ test.describe("Chrome extension assisted apply", () => {
     );
   });
 
+  test("content script attaches a resume to a normal visible file input", async ({ page }) => {
+    await page.addInitScript(() => {
+      (window as any).chrome = {
+        runtime: {
+          onMessage: {
+            addListener(listener: unknown) {
+              (window as any).__jobCopilotListener = listener;
+            }
+          }
+        }
+      };
+    });
+    await page.setContent(`
+      <main>
+        <h1>Frontend Engineer</h1>
+        <form>
+          <label for="resume">Resume</label><input id="resume" type="file" />
+        </form>
+      </main>
+    `);
+    await page.addScriptTag({ path: contentScriptPath });
+
+    const result = await page.evaluate(() =>
+      (window as any).attachResume({ fileName: "resume.pdf", fileType: "application/pdf", contentBase64: "SGVsbG8=" }, "#resume")
+    );
+    const fileName = await page.locator("#resume").evaluate((input: HTMLInputElement) => input.files?.[0]?.name);
+
+    expect(result.attached).toBe(true);
+    expect(fileName).toBe("resume.pdf");
+  });
+
+  test("restricted platform adapters map common fields but block final submit", async ({ page }) => {
+    await page.addInitScript(() => {
+      (window as any).chrome = {
+        runtime: {
+          onMessage: {
+            addListener(listener: unknown) {
+              (window as any).__jobCopilotListener = listener;
+            }
+          }
+        }
+      };
+    });
+    await page.route("https://www.linkedin.com/jobs/view/123", async (route) => {
+      await route.fulfill({
+        contentType: "text/html",
+        body: `
+          <main class="jobs-easy-apply-modal">
+            <h1>Backend Engineer</h1>
+            <form>
+              <label for="first">First name</label><input id="first" />
+              <label for="last">Last name</label><input id="last" />
+              <label for="resume">Upload resume</label><input id="resume" type="file" />
+              <button type="submit">Submit application</button>
+            </form>
+          </main>
+        `
+      });
+    });
+    await page.goto("https://www.linkedin.com/jobs/view/123");
+    await page.addScriptTag({ path: contentScriptPath });
+
+    const detection = await page.evaluate(() => (window as any).detectPage());
+    const submit = await page.evaluate(() =>
+      (window as any).clickFinalSubmit({ sourceType: "restricted_platform", automationLevel: "assisted_apply", finalSubmitAllowed: false })
+    );
+
+    expect(detection.sourcePlatform).toBe("LinkedIn");
+    expect(detection.adapter).toBe("LinkedIn Easy Apply");
+    expect(detection.fields).toEqual(expect.arrayContaining([expect.objectContaining({ profileKey: "firstName" })]));
+    expect(detection.fields).toEqual(expect.arrayContaining([expect.objectContaining({ profileKey: "resumeUpload" })]));
+    expect(submit.clicked).toBe(false);
+    expect(submit.blocked).toBe(true);
+  });
+
+  test("protected steps block next, submit, and resume attachment", async ({ page }) => {
+    await page.addInitScript(() => {
+      (window as any).chrome = {
+        runtime: {
+          onMessage: {
+            addListener(listener: unknown) {
+              (window as any).__jobCopilotListener = listener;
+            }
+          }
+        }
+      };
+    });
+    await page.setContent(`
+      <main>
+        <form>
+          <p>Complete this CAPTCHA before continuing.</p>
+          <label for="resume">Resume</label><input id="resume" type="file" />
+          <button type="button">Next</button>
+          <button type="submit">Submit application</button>
+        </form>
+      </main>
+    `);
+    await page.addScriptTag({ path: contentScriptPath });
+
+    const next = await page.evaluate(() => (window as any).clickSafeNext());
+    const attach = await page.evaluate(() =>
+      (window as any).attachResume({ fileName: "resume.pdf", fileType: "application/pdf", contentBase64: "SGVsbG8=" }, "#resume")
+    );
+
+    expect(next.clicked).toBe(false);
+    expect(next.blocked).toBe(true);
+    expect(attach.attached).toBe(false);
+    expect(attach.blocked).toBe(true);
+  });
+
   test("extension API denies requests without bearer token", async ({ request }) => {
     const response = await request.get(`${appUrl}/api/extension/profile`);
     expect(response.status()).toBe(401);

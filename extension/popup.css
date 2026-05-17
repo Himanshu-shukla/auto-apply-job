@@ -73,6 +73,20 @@ button.primary {
   color: #fff;
 }
 
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 35px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: #fff;
+  color: #334155;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 button.wide {
   width: 100%;
   margin-top: 10px;
