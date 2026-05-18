@@ -32,7 +32,8 @@ const state = {
   application: null,
   filledFields: [],
   skippedFields: [],
-  answers: []
+  answers: [],
+  queue: { campaigns: [], state: { running: false, results: [] } }
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -63,6 +64,11 @@ function bindActions() {
   document.getElementById("saveMapping").addEventListener("click", saveMappingPattern);
   document.getElementById("markSaved").addEventListener("click", () => markStatus("READY_TO_APPLY", false));
   document.getElementById("markApplied").addEventListener("click", () => markStatus("APPLIED", true));
+  document.getElementById("refreshQueue").addEventListener("click", loadQueue);
+  document.getElementById("startQueue").addEventListener("click", () => queueAction("QUEUE_START"));
+  document.getElementById("pauseQueue").addEventListener("click", () => queueAction("QUEUE_PAUSE"));
+  document.getElementById("runNextQueue").addEventListener("click", () => queueAction("QUEUE_RUN_NEXT"));
+  document.getElementById("campaignSelect").addEventListener("change", loadQueue);
 }
 
 async function loadSettings() {
@@ -73,6 +79,7 @@ async function loadSettings() {
   document.getElementById("token").value = state.token;
   updateStatus();
   if (state.token) await loadProfile();
+  if (state.token) await loadQueue();
 }
 
 async function saveToken() {
@@ -98,7 +105,7 @@ async function loadProfile() {
     const resumeData = await api("/api/extension/resumes").catch(() => ({ resumes: data.resume ? [data.resume] : [] }));
     state.profile = data.profile;
     state.resumes = resumeData.resumes || (data.resume ? [data.resume] : []);
-    state.selectedResumeId = state.resumes.find((resume) => resume.isActive)?.id || state.resumes[0]?.id || "";
+    state.selectedResumeId = state.resumes.find((resume) => resume.preferred)?.id || state.resumes.find((resume) => resume.isActive)?.id || state.resumes[0]?.id || "";
     updateStatus();
     renderFields();
     renderResumeHelp();
@@ -295,6 +302,30 @@ async function markStatus(status, markApplied) {
   }
 }
 
+async function loadQueue() {
+  try {
+    const result = await chrome.runtime.sendMessage({ type: "QUEUE_STATUS" });
+    if (result?.error) throw new Error(result.error);
+    state.queue = { campaigns: result.campaigns || [], state: result.state || { running: false, results: [] } };
+    renderQueue();
+  } catch (error) {
+    message(error.message);
+  }
+}
+
+async function queueAction(type, extra = {}) {
+  const campaignId = document.getElementById("campaignSelect").value || state.queue.state.campaignId;
+  try {
+    const result = await chrome.runtime.sendMessage({ type, campaignId, ...extra });
+    if (result?.error) throw new Error(result.error);
+    state.queue = { campaigns: result.campaigns || state.queue.campaigns, state: result.state || state.queue.state };
+    renderQueue();
+    message(state.queue.state.lastMessage || "Queue updated.");
+  } catch (error) {
+    message(error.message);
+  }
+}
+
 function renderJob(match) {
   const job = state.page?.job;
   const saved = state.capturedJob;
@@ -321,7 +352,7 @@ function renderResumeHelp() {
       <div><strong>Resume upload detected.</strong></div>
       <label for="resumeSelect">Resume</label>
       <select id="resumeSelect">
-        ${state.resumes.map((item) => `<option value="${escapeAttribute(item.id)}" ${item.id === resume.id ? "selected" : ""}>${escapeHtml(item.fileName)}${item.isActive ? " · active" : ""}</option>`).join("")}
+        ${state.resumes.map((item) => `<option value="${escapeAttribute(item.id)}" ${item.id === resume.id ? "selected" : ""}>${escapeHtml(item.fileName)}${item.preferred ? " · preferred" : item.isActive ? " · active" : ""}</option>`).join("")}
       </select>
       <div class="row">
         <button id="attachResume" class="primary">Attach Resume</button>
@@ -419,6 +450,44 @@ function renderQuestions() {
     card.querySelector("[data-action='generate']").addEventListener("click", () => generateAnswer(field));
     card.querySelector("[data-action='insert']").addEventListener("click", () => insertAnswer(field));
     container.appendChild(card);
+  }
+}
+
+function renderQueue() {
+  const select = document.getElementById("campaignSelect");
+  const summary = document.getElementById("queueSummary");
+  const jobs = document.getElementById("queueJobs");
+  const campaigns = state.queue.campaigns || [];
+  const selectedId = state.queue.state.campaignId || campaigns[0]?.id || "";
+  select.innerHTML = campaigns.length
+    ? campaigns.map((campaign) => `<option value="${escapeAttribute(campaign.id)}" ${campaign.id === selectedId ? "selected" : ""}>${escapeHtml(campaign.name)} · ${escapeHtml(campaign.status)}</option>`).join("")
+    : `<option value="">No ready campaigns</option>`;
+  const campaign = campaigns.find((item) => item.id === selectedId) || campaigns[0];
+  const ready = campaign?.jobs?.filter((item) => item.status === "ready").length ?? 0;
+  const retryable = campaign?.jobs?.filter((item) => item.canRetry).length ?? 0;
+  summary.style.display = "block";
+  summary.textContent = campaign
+    ? `${state.queue.state.running ? "Running" : "Paused"} · ${ready} ready · ${retryable} retryable · ${campaign.submittedCount || 0} submitted`
+    : "Create and approve a campaign in the web app, then refresh.";
+  jobs.innerHTML = "";
+  for (const item of campaign?.jobs || []) {
+    const card = document.createElement("div");
+    card.className = "queue-card";
+    card.innerHTML = `
+      <div class="field-title">${escapeHtml(item.job.title)}</div>
+      <div class="field-meta">${escapeHtml(item.job.company)} · ${escapeHtml(item.job.sourceType)} / ${escapeHtml(item.job.automationLevel)} · Match ${escapeHtml(item.matchScore)}</div>
+      ${item.lastError ? `<p class="hint">${escapeHtml(item.lastError)}</p>` : ""}
+      <div class="row">
+        <button data-open>Open</button>
+        ${item.canRetry ? `<button data-retry class="primary">Retry</button>` : ""}
+      </div>
+    `;
+    card.querySelector("[data-open]").addEventListener("click", async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id) await chrome.tabs.update(tab.id, { url: item.job.applyUrl });
+    });
+    card.querySelector("[data-retry]")?.addEventListener("click", () => queueAction("QUEUE_RETRY", { campaignJobId: item.id }));
+    jobs.appendChild(card);
   }
 }
 

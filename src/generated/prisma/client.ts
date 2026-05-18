@@ -47,6 +47,11 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model ApplicantProfile
+ * 
+ */
+export type ApplicantProfile = Prisma.ApplicantProfileModel
+/**
  * Model Resume
  * 
  */

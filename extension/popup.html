@@ -20,6 +20,7 @@
       <button class="tab" data-tab="job">Current Job</button>
       <button class="tab" data-tab="autofill">Autofill</button>
       <button class="tab" data-tab="answers">Answers</button>
+      <button class="tab" data-tab="queue">Queue</button>
       <button class="tab" data-tab="tracker">Tracker</button>
     </nav>
 
@@ -67,6 +68,23 @@
           <option value="confident">Confident</option>
         </select>
         <div id="questions"></div>
+      </section>
+
+      <section id="queue" class="panel">
+        <div class="row spaced">
+          <strong>Browser Queue</strong>
+          <button id="refreshQueue">Refresh</button>
+        </div>
+        <label>Campaign</label>
+        <select id="campaignSelect"></select>
+        <div class="row">
+          <button id="startQueue" class="primary">Start</button>
+          <button id="pauseQueue">Pause</button>
+          <button id="runNextQueue">Run Next</button>
+        </div>
+        <div id="queueSummary" class="notice"></div>
+        <div id="queueJobs"></div>
+        <p class="hint">Restricted platforms are filled and then paused for manual final submit. Approved company career pages can policy-submit automatically.</p>
       </section>
 
       <section id="tracker" class="panel">

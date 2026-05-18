@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  ApplicantProfile: 'ApplicantProfile',
   Resume: 'Resume',
   JobPreference: 'JobPreference',
   Job: 'Job',
@@ -106,6 +107,33 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const ApplicantProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fullName: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  currentLocation: 'currentLocation',
+  targetRole: 'targetRole',
+  expectedSalary: 'expectedSalary',
+  availability: 'availability',
+  workAuthorization: 'workAuthorization',
+  visaStatus: 'visaStatus',
+  linkedIn: 'linkedIn',
+  portfolio: 'portfolio',
+  github: 'github',
+  preferredResumeId: 'preferredResumeId',
+  workHistory: 'workHistory',
+  education: 'education',
+  certificates: 'certificates',
+  customAnswers: 'customAnswers',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ApplicantProfileScalarFieldEnum = (typeof ApplicantProfileScalarFieldEnum)[keyof typeof ApplicantProfileScalarFieldEnum]
 
 
 export const ResumeScalarFieldEnum = {

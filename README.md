@@ -40,6 +40,7 @@ npm run seed
 Key pages:
 
 - `/campaigns` for 50/100/500-job bulk review queues
+- `/profile` for structured applicant details used by extension autofill and queue runs
 - `/automation` for automation rules and daily quota visibility
 - `/sources` for allowed company domains, direct-email sources, official APIs, and partner feeds
 - `/approval-queue` for generated applications requiring review
@@ -101,7 +102,7 @@ Greenhouse, Lever, and Ashby search adapters use official public ATS endpoints w
 ## Assisted Apply Flow
 
 1. Upload a PDF or DOCX resume at `/resume`.
-2. Review and edit parsed profile data.
+2. Review parsed resume data, then complete structured details at `/profile`.
 3. Save preferences at `/preferences`.
 4. Save answer templates at `/answer-templates` for notice period, salary expectation, relocation, work authorization, introduction, and common short answers.
 5. Open a job page in Chrome.
@@ -113,6 +114,15 @@ Greenhouse, Lever, and Ashby search adapters use official public ATS endpoints w
 11. Use **Policy Submit** only when the saved job's source policy allows one-click apply; otherwise submit manually.
 12. Use **Tracker** in the extension to mark the application as applied when you submit yourself.
 13. Review the saved record at `/tracker` or `/applications/[id]`.
+
+## Browser Queue Flow
+
+1. Create a campaign, review jobs, and approve the items you want to run.
+2. Open the extension **Queue** tab and refresh campaigns.
+3. Select a campaign and click **Start** or **Run Next**.
+4. The background worker opens the next approved job, fills safe fields from `/profile`, attempts resume attachment, captures proof, and records the result.
+5. Restricted platforms pause after assisted filling so you can review and submit manually.
+6. Explicitly allowed company career pages can use policy submit; blocked or failed jobs can be retried from the Queue tab.
 
 ## Safety Rules
 
@@ -201,6 +211,9 @@ Implemented routes:
 - `GET /api/extension/profile`
 - `GET /api/extension/preferences`
 - `GET /api/extension/resumes`
+- `GET /api/extension/campaign-queue`
+- `POST /api/extension/campaign-result`
+- `POST /api/extension/campaign-retry`
 - `GET /api/extension/cover-letters`
 - `POST /api/extension/capture-job`
 - `POST /api/extension/match-job`

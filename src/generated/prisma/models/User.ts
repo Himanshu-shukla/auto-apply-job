@@ -213,6 +213,7 @@ export type UserWhereInput = {
   campaignJobs?: Prisma.CampaignJobListRelationFilter
   applicationAttempts?: Prisma.ApplicationAttemptListRelationFilter
   providerCredentials?: Prisma.ProviderCredentialListRelationFilter
+  applicantProfile?: Prisma.XOR<Prisma.ApplicantProfileNullableScalarRelationFilter, Prisma.ApplicantProfileWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -245,6 +246,7 @@ export type UserOrderByWithRelationInput = {
   campaignJobs?: Prisma.CampaignJobOrderByRelationAggregateInput
   applicationAttempts?: Prisma.ApplicationAttemptOrderByRelationAggregateInput
   providerCredentials?: Prisma.ProviderCredentialOrderByRelationAggregateInput
+  applicantProfile?: Prisma.ApplicantProfileOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -280,6 +282,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   campaignJobs?: Prisma.CampaignJobListRelationFilter
   applicationAttempts?: Prisma.ApplicationAttemptListRelationFilter
   providerCredentials?: Prisma.ProviderCredentialListRelationFilter
+  applicantProfile?: Prisma.XOR<Prisma.ApplicantProfileNullableScalarRelationFilter, Prisma.ApplicantProfileWhereInput> | null
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -336,6 +339,7 @@ export type UserCreateInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -368,6 +372,7 @@ export type UserUncheckedCreateInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -400,6 +405,7 @@ export type UserUpdateInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -432,6 +438,7 @@ export type UserUncheckedUpdateInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -508,6 +515,20 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type UserCreateNestedOneWithoutApplicantProfileInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApplicantProfileInput, Prisma.UserUncheckedCreateWithoutApplicantProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApplicantProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutApplicantProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApplicantProfileInput, Prisma.UserUncheckedCreateWithoutApplicantProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApplicantProfileInput
+  upsert?: Prisma.UserUpsertWithoutApplicantProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApplicantProfileInput, Prisma.UserUpdateWithoutApplicantProfileInput>, Prisma.UserUncheckedUpdateWithoutApplicantProfileInput>
 }
 
 export type UserCreateNestedOneWithoutResumesInput = {
@@ -834,6 +855,150 @@ export type UserUpdateOneRequiredWithoutProviderCredentialsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProviderCredentialsInput, Prisma.UserUpdateWithoutProviderCredentialsInput>, Prisma.UserUncheckedUpdateWithoutProviderCredentialsInput>
 }
 
+export type UserCreateWithoutApplicantProfileInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  name?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceCreateNestedManyWithoutUserInput
+  jobs?: Prisma.JobCreateNestedManyWithoutUserInput
+  applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterCreateNestedManyWithoutUserInput
+  suggestions?: Prisma.ResumeSuggestionCreateNestedManyWithoutUserInput
+  extensionTokens?: Prisma.ExtensionTokenCreateNestedManyWithoutUserInput
+  answerTemplates?: Prisma.AnswerTemplateCreateNestedManyWithoutUserInput
+  automationRules?: Prisma.AutomationRuleCreateNestedManyWithoutUserInput
+  jobSources?: Prisma.JobSourceCreateNestedManyWithoutUserInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemCreateNestedManyWithoutUserInput
+  emailApplications?: Prisma.EmailApplicationCreateNestedManyWithoutUserInput
+  followUps?: Prisma.FollowUpCreateNestedManyWithoutUserInput
+  resumeVersions?: Prisma.ResumeVersionCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  automationSetting?: Prisma.AutomationSettingCreateNestedOneWithoutUserInput
+  emailSetting?: Prisma.EmailSettingCreateNestedOneWithoutUserInput
+  providerRunLogs?: Prisma.ProviderRunLogCreateNestedManyWithoutUserInput
+  applicationCampaigns?: Prisma.ApplicationCampaignCreateNestedManyWithoutUserInput
+  campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
+  applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
+  providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutApplicantProfileInput = {
+  id?: string
+  email: string
+  passwordHash?: string | null
+  name?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
+  preferences?: Prisma.JobPreferenceUncheckedCreateNestedManyWithoutUserInput
+  jobs?: Prisma.JobUncheckedCreateNestedManyWithoutUserInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
+  coverLetters?: Prisma.CoverLetterUncheckedCreateNestedManyWithoutUserInput
+  suggestions?: Prisma.ResumeSuggestionUncheckedCreateNestedManyWithoutUserInput
+  extensionTokens?: Prisma.ExtensionTokenUncheckedCreateNestedManyWithoutUserInput
+  answerTemplates?: Prisma.AnswerTemplateUncheckedCreateNestedManyWithoutUserInput
+  automationRules?: Prisma.AutomationRuleUncheckedCreateNestedManyWithoutUserInput
+  jobSources?: Prisma.JobSourceUncheckedCreateNestedManyWithoutUserInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedCreateNestedManyWithoutUserInput
+  emailApplications?: Prisma.EmailApplicationUncheckedCreateNestedManyWithoutUserInput
+  followUps?: Prisma.FollowUpUncheckedCreateNestedManyWithoutUserInput
+  resumeVersions?: Prisma.ResumeVersionUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  automationSetting?: Prisma.AutomationSettingUncheckedCreateNestedOneWithoutUserInput
+  emailSetting?: Prisma.EmailSettingUncheckedCreateNestedOneWithoutUserInput
+  providerRunLogs?: Prisma.ProviderRunLogUncheckedCreateNestedManyWithoutUserInput
+  applicationCampaigns?: Prisma.ApplicationCampaignUncheckedCreateNestedManyWithoutUserInput
+  campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
+  applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
+  providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutApplicantProfileInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutApplicantProfileInput, Prisma.UserUncheckedCreateWithoutApplicantProfileInput>
+}
+
+export type UserUpsertWithoutApplicantProfileInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutApplicantProfileInput, Prisma.UserUncheckedUpdateWithoutApplicantProfileInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutApplicantProfileInput, Prisma.UserUncheckedCreateWithoutApplicantProfileInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutApplicantProfileInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutApplicantProfileInput, Prisma.UserUncheckedUpdateWithoutApplicantProfileInput>
+}
+
+export type UserUpdateWithoutApplicantProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUpdateManyWithoutUserNestedInput
+  jobs?: Prisma.JobUpdateManyWithoutUserNestedInput
+  applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUpdateManyWithoutUserNestedInput
+  suggestions?: Prisma.ResumeSuggestionUpdateManyWithoutUserNestedInput
+  extensionTokens?: Prisma.ExtensionTokenUpdateManyWithoutUserNestedInput
+  answerTemplates?: Prisma.AnswerTemplateUpdateManyWithoutUserNestedInput
+  automationRules?: Prisma.AutomationRuleUpdateManyWithoutUserNestedInput
+  jobSources?: Prisma.JobSourceUpdateManyWithoutUserNestedInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemUpdateManyWithoutUserNestedInput
+  emailApplications?: Prisma.EmailApplicationUpdateManyWithoutUserNestedInput
+  followUps?: Prisma.FollowUpUpdateManyWithoutUserNestedInput
+  resumeVersions?: Prisma.ResumeVersionUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  automationSetting?: Prisma.AutomationSettingUpdateOneWithoutUserNestedInput
+  emailSetting?: Prisma.EmailSettingUpdateOneWithoutUserNestedInput
+  providerRunLogs?: Prisma.ProviderRunLogUpdateManyWithoutUserNestedInput
+  applicationCampaigns?: Prisma.ApplicationCampaignUpdateManyWithoutUserNestedInput
+  campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
+  applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
+  providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutApplicantProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
+  preferences?: Prisma.JobPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  jobs?: Prisma.JobUncheckedUpdateManyWithoutUserNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
+  coverLetters?: Prisma.CoverLetterUncheckedUpdateManyWithoutUserNestedInput
+  suggestions?: Prisma.ResumeSuggestionUncheckedUpdateManyWithoutUserNestedInput
+  extensionTokens?: Prisma.ExtensionTokenUncheckedUpdateManyWithoutUserNestedInput
+  answerTemplates?: Prisma.AnswerTemplateUncheckedUpdateManyWithoutUserNestedInput
+  automationRules?: Prisma.AutomationRuleUncheckedUpdateManyWithoutUserNestedInput
+  jobSources?: Prisma.JobSourceUncheckedUpdateManyWithoutUserNestedInput
+  approvalQueueItems?: Prisma.ApprovalQueueItemUncheckedUpdateManyWithoutUserNestedInput
+  emailApplications?: Prisma.EmailApplicationUncheckedUpdateManyWithoutUserNestedInput
+  followUps?: Prisma.FollowUpUncheckedUpdateManyWithoutUserNestedInput
+  resumeVersions?: Prisma.ResumeVersionUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  automationSetting?: Prisma.AutomationSettingUncheckedUpdateOneWithoutUserNestedInput
+  emailSetting?: Prisma.EmailSettingUncheckedUpdateOneWithoutUserNestedInput
+  providerRunLogs?: Prisma.ProviderRunLogUncheckedUpdateManyWithoutUserNestedInput
+  applicationCampaigns?: Prisma.ApplicationCampaignUncheckedUpdateManyWithoutUserNestedInput
+  campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
+  applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
+  providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutResumesInput = {
   id?: string
   email: string
@@ -863,6 +1028,7 @@ export type UserCreateWithoutResumesInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutResumesInput = {
@@ -894,6 +1060,7 @@ export type UserUncheckedCreateWithoutResumesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutResumesInput = {
@@ -941,6 +1108,7 @@ export type UserUpdateWithoutResumesInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutResumesInput = {
@@ -972,6 +1140,7 @@ export type UserUncheckedUpdateWithoutResumesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPreferencesInput = {
@@ -1003,6 +1172,7 @@ export type UserCreateWithoutPreferencesInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPreferencesInput = {
@@ -1034,6 +1204,7 @@ export type UserUncheckedCreateWithoutPreferencesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -1081,6 +1252,7 @@ export type UserUpdateWithoutPreferencesInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPreferencesInput = {
@@ -1112,6 +1284,7 @@ export type UserUncheckedUpdateWithoutPreferencesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutJobsInput = {
@@ -1143,6 +1316,7 @@ export type UserCreateWithoutJobsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutJobsInput = {
@@ -1174,6 +1348,7 @@ export type UserUncheckedCreateWithoutJobsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutJobsInput = {
@@ -1221,6 +1396,7 @@ export type UserUpdateWithoutJobsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutJobsInput = {
@@ -1252,6 +1428,7 @@ export type UserUncheckedUpdateWithoutJobsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSuggestionsInput = {
@@ -1283,6 +1460,7 @@ export type UserCreateWithoutSuggestionsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSuggestionsInput = {
@@ -1314,6 +1492,7 @@ export type UserUncheckedCreateWithoutSuggestionsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSuggestionsInput = {
@@ -1361,6 +1540,7 @@ export type UserUpdateWithoutSuggestionsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSuggestionsInput = {
@@ -1392,6 +1572,7 @@ export type UserUncheckedUpdateWithoutSuggestionsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCoverLettersInput = {
@@ -1423,6 +1604,7 @@ export type UserCreateWithoutCoverLettersInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCoverLettersInput = {
@@ -1454,6 +1636,7 @@ export type UserUncheckedCreateWithoutCoverLettersInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCoverLettersInput = {
@@ -1501,6 +1684,7 @@ export type UserUpdateWithoutCoverLettersInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCoverLettersInput = {
@@ -1532,6 +1716,7 @@ export type UserUncheckedUpdateWithoutCoverLettersInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApplicationsInput = {
@@ -1563,6 +1748,7 @@ export type UserCreateWithoutApplicationsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApplicationsInput = {
@@ -1594,6 +1780,7 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApplicationsInput = {
@@ -1641,6 +1828,7 @@ export type UserUpdateWithoutApplicationsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplicationsInput = {
@@ -1672,6 +1860,7 @@ export type UserUncheckedUpdateWithoutApplicationsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutExtensionTokensInput = {
@@ -1703,6 +1892,7 @@ export type UserCreateWithoutExtensionTokensInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutExtensionTokensInput = {
@@ -1734,6 +1924,7 @@ export type UserUncheckedCreateWithoutExtensionTokensInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutExtensionTokensInput = {
@@ -1781,6 +1972,7 @@ export type UserUpdateWithoutExtensionTokensInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutExtensionTokensInput = {
@@ -1812,6 +2004,7 @@ export type UserUncheckedUpdateWithoutExtensionTokensInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAnswerTemplatesInput = {
@@ -1843,6 +2036,7 @@ export type UserCreateWithoutAnswerTemplatesInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAnswerTemplatesInput = {
@@ -1874,6 +2068,7 @@ export type UserUncheckedCreateWithoutAnswerTemplatesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAnswerTemplatesInput = {
@@ -1921,6 +2116,7 @@ export type UserUpdateWithoutAnswerTemplatesInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAnswerTemplatesInput = {
@@ -1952,6 +2148,7 @@ export type UserUncheckedUpdateWithoutAnswerTemplatesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAutomationRulesInput = {
@@ -1983,6 +2180,7 @@ export type UserCreateWithoutAutomationRulesInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAutomationRulesInput = {
@@ -2014,6 +2212,7 @@ export type UserUncheckedCreateWithoutAutomationRulesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAutomationRulesInput = {
@@ -2061,6 +2260,7 @@ export type UserUpdateWithoutAutomationRulesInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAutomationRulesInput = {
@@ -2092,6 +2292,7 @@ export type UserUncheckedUpdateWithoutAutomationRulesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutJobSourcesInput = {
@@ -2123,6 +2324,7 @@ export type UserCreateWithoutJobSourcesInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutJobSourcesInput = {
@@ -2154,6 +2356,7 @@ export type UserUncheckedCreateWithoutJobSourcesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutJobSourcesInput = {
@@ -2201,6 +2404,7 @@ export type UserUpdateWithoutJobSourcesInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutJobSourcesInput = {
@@ -2232,6 +2436,7 @@ export type UserUncheckedUpdateWithoutJobSourcesInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApprovalQueueItemsInput = {
@@ -2263,6 +2468,7 @@ export type UserCreateWithoutApprovalQueueItemsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApprovalQueueItemsInput = {
@@ -2294,6 +2500,7 @@ export type UserUncheckedCreateWithoutApprovalQueueItemsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApprovalQueueItemsInput = {
@@ -2341,6 +2548,7 @@ export type UserUpdateWithoutApprovalQueueItemsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApprovalQueueItemsInput = {
@@ -2372,6 +2580,7 @@ export type UserUncheckedUpdateWithoutApprovalQueueItemsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEmailApplicationsInput = {
@@ -2403,6 +2612,7 @@ export type UserCreateWithoutEmailApplicationsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEmailApplicationsInput = {
@@ -2434,6 +2644,7 @@ export type UserUncheckedCreateWithoutEmailApplicationsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEmailApplicationsInput = {
@@ -2481,6 +2692,7 @@ export type UserUpdateWithoutEmailApplicationsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailApplicationsInput = {
@@ -2512,6 +2724,7 @@ export type UserUncheckedUpdateWithoutEmailApplicationsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFollowUpsInput = {
@@ -2543,6 +2756,7 @@ export type UserCreateWithoutFollowUpsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFollowUpsInput = {
@@ -2574,6 +2788,7 @@ export type UserUncheckedCreateWithoutFollowUpsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFollowUpsInput = {
@@ -2621,6 +2836,7 @@ export type UserUpdateWithoutFollowUpsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFollowUpsInput = {
@@ -2652,6 +2868,7 @@ export type UserUncheckedUpdateWithoutFollowUpsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutResumeVersionsInput = {
@@ -2683,6 +2900,7 @@ export type UserCreateWithoutResumeVersionsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutResumeVersionsInput = {
@@ -2714,6 +2932,7 @@ export type UserUncheckedCreateWithoutResumeVersionsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutResumeVersionsInput = {
@@ -2761,6 +2980,7 @@ export type UserUpdateWithoutResumeVersionsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutResumeVersionsInput = {
@@ -2792,6 +3012,7 @@ export type UserUncheckedUpdateWithoutResumeVersionsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditLogsInput = {
@@ -2823,6 +3044,7 @@ export type UserCreateWithoutAuditLogsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -2854,6 +3076,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -2901,6 +3124,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -2932,6 +3156,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -2963,6 +3188,7 @@ export type UserCreateWithoutNotificationsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2994,6 +3220,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -3041,6 +3268,7 @@ export type UserUpdateWithoutNotificationsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -3072,6 +3300,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAutomationSettingInput = {
@@ -3103,6 +3332,7 @@ export type UserCreateWithoutAutomationSettingInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAutomationSettingInput = {
@@ -3134,6 +3364,7 @@ export type UserUncheckedCreateWithoutAutomationSettingInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAutomationSettingInput = {
@@ -3181,6 +3412,7 @@ export type UserUpdateWithoutAutomationSettingInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAutomationSettingInput = {
@@ -3212,6 +3444,7 @@ export type UserUncheckedUpdateWithoutAutomationSettingInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEmailSettingInput = {
@@ -3243,6 +3476,7 @@ export type UserCreateWithoutEmailSettingInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEmailSettingInput = {
@@ -3274,6 +3508,7 @@ export type UserUncheckedCreateWithoutEmailSettingInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEmailSettingInput = {
@@ -3321,6 +3556,7 @@ export type UserUpdateWithoutEmailSettingInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailSettingInput = {
@@ -3352,6 +3588,7 @@ export type UserUncheckedUpdateWithoutEmailSettingInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProviderRunLogsInput = {
@@ -3383,6 +3620,7 @@ export type UserCreateWithoutProviderRunLogsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProviderRunLogsInput = {
@@ -3414,6 +3652,7 @@ export type UserUncheckedCreateWithoutProviderRunLogsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProviderRunLogsInput = {
@@ -3461,6 +3700,7 @@ export type UserUpdateWithoutProviderRunLogsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProviderRunLogsInput = {
@@ -3492,6 +3732,7 @@ export type UserUncheckedUpdateWithoutProviderRunLogsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApplicationCampaignsInput = {
@@ -3523,6 +3764,7 @@ export type UserCreateWithoutApplicationCampaignsInput = {
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApplicationCampaignsInput = {
@@ -3554,6 +3796,7 @@ export type UserUncheckedCreateWithoutApplicationCampaignsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApplicationCampaignsInput = {
@@ -3601,6 +3844,7 @@ export type UserUpdateWithoutApplicationCampaignsInput = {
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplicationCampaignsInput = {
@@ -3632,6 +3876,7 @@ export type UserUncheckedUpdateWithoutApplicationCampaignsInput = {
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCampaignJobsInput = {
@@ -3663,6 +3908,7 @@ export type UserCreateWithoutCampaignJobsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCampaignJobsInput = {
@@ -3694,6 +3940,7 @@ export type UserUncheckedCreateWithoutCampaignJobsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCampaignJobsInput = {
@@ -3741,6 +3988,7 @@ export type UserUpdateWithoutCampaignJobsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCampaignJobsInput = {
@@ -3772,6 +4020,7 @@ export type UserUncheckedUpdateWithoutCampaignJobsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApplicationAttemptsInput = {
@@ -3803,6 +4052,7 @@ export type UserCreateWithoutApplicationAttemptsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignCreateNestedManyWithoutUserInput
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApplicationAttemptsInput = {
@@ -3834,6 +4084,7 @@ export type UserUncheckedCreateWithoutApplicationAttemptsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignUncheckedCreateNestedManyWithoutUserInput
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApplicationAttemptsInput = {
@@ -3881,6 +4132,7 @@ export type UserUpdateWithoutApplicationAttemptsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignUpdateManyWithoutUserNestedInput
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplicationAttemptsInput = {
@@ -3912,6 +4164,7 @@ export type UserUncheckedUpdateWithoutApplicationAttemptsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignUncheckedUpdateManyWithoutUserNestedInput
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   providerCredentials?: Prisma.ProviderCredentialUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProviderCredentialsInput = {
@@ -3943,6 +4196,7 @@ export type UserCreateWithoutProviderCredentialsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignCreateNestedManyWithoutUserInput
   campaignJobs?: Prisma.CampaignJobCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProviderCredentialsInput = {
@@ -3974,6 +4228,7 @@ export type UserUncheckedCreateWithoutProviderCredentialsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignUncheckedCreateNestedManyWithoutUserInput
   campaignJobs?: Prisma.CampaignJobUncheckedCreateNestedManyWithoutUserInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedCreateNestedManyWithoutUserInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProviderCredentialsInput = {
@@ -4021,6 +4276,7 @@ export type UserUpdateWithoutProviderCredentialsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignUpdateManyWithoutUserNestedInput
   campaignJobs?: Prisma.CampaignJobUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProviderCredentialsInput = {
@@ -4052,6 +4308,7 @@ export type UserUncheckedUpdateWithoutProviderCredentialsInput = {
   applicationCampaigns?: Prisma.ApplicationCampaignUncheckedUpdateManyWithoutUserNestedInput
   campaignJobs?: Prisma.CampaignJobUncheckedUpdateManyWithoutUserNestedInput
   applicationAttempts?: Prisma.ApplicationAttemptUncheckedUpdateManyWithoutUserNestedInput
+  applicantProfile?: Prisma.ApplicantProfileUncheckedUpdateOneWithoutUserNestedInput
 }
 
 
@@ -4295,6 +4552,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   campaignJobs?: boolean | Prisma.User$campaignJobsArgs<ExtArgs>
   applicationAttempts?: boolean | Prisma.User$applicationAttemptsArgs<ExtArgs>
   providerCredentials?: boolean | Prisma.User$providerCredentialsArgs<ExtArgs>
+  applicantProfile?: boolean | Prisma.User$applicantProfileArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4350,6 +4608,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   campaignJobs?: boolean | Prisma.User$campaignJobsArgs<ExtArgs>
   applicationAttempts?: boolean | Prisma.User$applicationAttemptsArgs<ExtArgs>
   providerCredentials?: boolean | Prisma.User$providerCredentialsArgs<ExtArgs>
+  applicantProfile?: boolean | Prisma.User$applicantProfileArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -4381,6 +4640,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     campaignJobs: Prisma.$CampaignJobPayload<ExtArgs>[]
     applicationAttempts: Prisma.$ApplicationAttemptPayload<ExtArgs>[]
     providerCredentials: Prisma.$ProviderCredentialPayload<ExtArgs>[]
+    applicantProfile: Prisma.$ApplicantProfilePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4806,6 +5066,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   campaignJobs<T extends Prisma.User$campaignJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$campaignJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CampaignJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   applicationAttempts<T extends Prisma.User$applicationAttemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applicationAttemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   providerCredentials<T extends Prisma.User$providerCredentialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$providerCredentialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProviderCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  applicantProfile<T extends Prisma.User$applicantProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applicantProfileArgs<ExtArgs>>): Prisma.Prisma__ApplicantProfileClient<runtime.Types.Result.GetResult<Prisma.$ApplicantProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5773,6 +6034,25 @@ export type User$providerCredentialsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.ProviderCredentialScalarFieldEnum | Prisma.ProviderCredentialScalarFieldEnum[]
+}
+
+/**
+ * User.applicantProfile
+ */
+export type User$applicantProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApplicantProfile
+   */
+  select?: Prisma.ApplicantProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApplicantProfile
+   */
+  omit?: Prisma.ApplicantProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApplicantProfileInclude<ExtArgs> | null
+  where?: Prisma.ApplicantProfileWhereInput
 }
 
 /**

@@ -124,7 +124,7 @@ label {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 0;
   background: #fff;
   border-bottom: 1px solid var(--line);
@@ -169,6 +169,7 @@ main {
 .summary,
 .field-card,
 .question-card,
+.queue-card,
 .notice {
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -200,7 +201,8 @@ footer {
 }
 
 .field-card,
-.question-card {
+.question-card,
+.queue-card {
   margin-top: 10px;
 }
 

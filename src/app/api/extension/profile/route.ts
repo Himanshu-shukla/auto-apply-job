@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isAuthContext, validateExtensionRequest } from "@/lib/services/extensionAuth";
 import { listAnswerTemplates } from "@/lib/services/phase2Storage";
-import type { ParsedResume } from "@/lib/types";
+import { extensionProfileFromSources, getApplicantProfile } from "@/lib/services/applicantProfile";
 
 export const dynamic = "force-dynamic";
 
@@ -16,24 +16,16 @@ export async function GET(request: NextRequest) {
     prisma.jobPreference.findFirst({ where: { userId: auth.userId }, orderBy: { updatedAt: "desc" } }),
     listAnswerTemplates(auth.userId)
   ]);
+  const profileRecord = await getApplicantProfile(auth.userId);
 
-  const parsed = resume?.parsedJson as ParsedResume | undefined;
   return NextResponse.json({
-    profile: {
-      fullName: parsed?.name || user?.name || "",
-      email: parsed?.email || user?.email || "",
-      phone: parsed?.phone || "",
-      currentLocation: parsed?.location || "",
-      targetRole: preferences?.targetRole || "",
-      totalExperience: parsed?.totalExperienceYears ?? resume?.totalExperienceYears ?? null,
-      skills: parsed?.skills ?? [],
-      expectedSalary: preferences?.minimumSalary ?? null,
-      noticePeriod: templateAnswer(templates, "notice_period"),
-      linkedIn: "",
-      portfolio: "",
-      github: "",
-      coverLetter: ""
-    },
+    profile: extensionProfileFromSources({
+      user,
+      profile: profileRecord,
+      resume,
+      preferences,
+      noticePeriod: templateAnswer(templates, "notice_period")
+    }),
     resume: resume
       ? {
           id: resume.id,

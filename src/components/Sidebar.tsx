@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, BriefcaseBusiness, ChartNoAxesCombined, ClipboardList, FileStack, FileText, Gauge, KeyRound, LayoutDashboard, ListChecks, MailCheck, MessageSquareText, Send, ShieldCheck, Settings2, SlidersHorizontal } from "lucide-react";
+import { Bell, BriefcaseBusiness, ChartNoAxesCombined, ClipboardList, FileStack, FileText, Gauge, KeyRound, LayoutDashboard, ListChecks, MailCheck, MessageSquareText, Send, ShieldCheck, Settings2, SlidersHorizontal, UserRound } from "lucide-react";
 
 const items = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/profile", label: "Profile", icon: UserRound },
   { href: "/resume", label: "Resume", icon: FileText },
   { href: "/preferences", label: "Preferences", icon: Settings2 },
   { href: "/jobs", label: "Jobs", icon: BriefcaseBusiness },

@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  ApplicantProfile: 'ApplicantProfile',
   Resume: 'Resume',
   JobPreference: 'JobPreference',
   Job: 'Job',
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "resume" | "jobPreference" | "job" | "jobMatchScore" | "resumeSuggestion" | "coverLetter" | "application" | "extensionToken" | "answerTemplate" | "applicationAnswer" | "autofillLog" | "automationRule" | "jobSource" | "approvalQueueItem" | "emailApplication" | "followUp" | "resumeVersion" | "auditLog" | "notification" | "automationSetting" | "emailSetting" | "providerRunLog" | "applicationCampaign" | "campaignJob" | "applicationAttempt" | "providerCredential"
+    modelProps: "user" | "applicantProfile" | "resume" | "jobPreference" | "job" | "jobMatchScore" | "resumeSuggestion" | "coverLetter" | "application" | "extensionToken" | "answerTemplate" | "applicationAnswer" | "autofillLog" | "automationRule" | "jobSource" | "approvalQueueItem" | "emailApplication" | "followUp" | "resumeVersion" | "auditLog" | "notification" | "automationSetting" | "emailSetting" | "providerRunLog" | "applicationCampaign" | "campaignJob" | "applicationAttempt" | "providerCredential"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -501,6 +502,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    ApplicantProfile: {
+      payload: Prisma.$ApplicantProfilePayload<ExtArgs>
+      fields: Prisma.ApplicantProfileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ApplicantProfileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ApplicantProfileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload>
+        }
+        findFirst: {
+          args: Prisma.ApplicantProfileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ApplicantProfileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload>
+        }
+        findMany: {
+          args: Prisma.ApplicantProfileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload>[]
+        }
+        create: {
+          args: Prisma.ApplicantProfileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload>
+        }
+        createMany: {
+          args: Prisma.ApplicantProfileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ApplicantProfileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload>[]
+        }
+        delete: {
+          args: Prisma.ApplicantProfileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload>
+        }
+        update: {
+          args: Prisma.ApplicantProfileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload>
+        }
+        deleteMany: {
+          args: Prisma.ApplicantProfileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ApplicantProfileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ApplicantProfileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload>[]
+        }
+        upsert: {
+          args: Prisma.ApplicantProfileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApplicantProfilePayload>
+        }
+        aggregate: {
+          args: Prisma.ApplicantProfileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateApplicantProfile>
+        }
+        groupBy: {
+          args: Prisma.ApplicantProfileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApplicantProfileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ApplicantProfileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApplicantProfileCountAggregateOutputType> | number
         }
       }
     }
@@ -2479,6 +2554,33 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const ApplicantProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fullName: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  currentLocation: 'currentLocation',
+  targetRole: 'targetRole',
+  expectedSalary: 'expectedSalary',
+  availability: 'availability',
+  workAuthorization: 'workAuthorization',
+  visaStatus: 'visaStatus',
+  linkedIn: 'linkedIn',
+  portfolio: 'portfolio',
+  github: 'github',
+  preferredResumeId: 'preferredResumeId',
+  workHistory: 'workHistory',
+  education: 'education',
+  certificates: 'certificates',
+  customAnswers: 'customAnswers',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ApplicantProfileScalarFieldEnum = (typeof ApplicantProfileScalarFieldEnum)[keyof typeof ApplicantProfileScalarFieldEnum]
+
+
 export const ResumeScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3359,6 +3461,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  applicantProfile?: Prisma.ApplicantProfileOmit
   resume?: Prisma.ResumeOmit
   jobPreference?: Prisma.JobPreferenceOmit
   job?: Prisma.JobOmit

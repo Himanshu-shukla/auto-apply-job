@@ -146,8 +146,36 @@ model User {
   campaignJobs  CampaignJob[]
   applicationAttempts ApplicationAttempt[]
   providerCredentials ProviderCredential[]
+  applicantProfile ApplicantProfile?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+}
+
+model ApplicantProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName           String   @default("")
+  email              String   @default("")
+  phone              String   @default("")
+  currentLocation    String   @default("")
+  targetRole         String   @default("")
+  expectedSalary     String   @default("")
+  availability       String   @default("")
+  workAuthorization  String   @default("")
+  visaStatus         String   @default("")
+  linkedIn           String   @default("")
+  portfolio          String   @default("")
+  github             String   @default("")
+  preferredResumeId  String?
+  workHistory        Json     @default("[]")
+  education          Json     @default("[]")
+  certificates       Json     @default("[]")
+  customAnswers      Json     @default("[]")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Resume {
