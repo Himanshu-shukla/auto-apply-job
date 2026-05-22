@@ -33,6 +33,7 @@ const state = {
   filledFields: [],
   skippedFields: [],
   answers: [],
+  resultImport: { jobs: [], sourcePlatform: "", url: "" },
   queue: { campaigns: [], state: { running: false, results: [] } }
 };
 
@@ -58,6 +59,9 @@ function bindActions() {
   document.getElementById("clearToken").addEventListener("click", clearToken);
   document.getElementById("saveJob").addEventListener("click", saveJob);
   document.getElementById("matchJob").addEventListener("click", matchJob);
+  document.getElementById("scanResults").addEventListener("click", scanJobResults);
+  document.getElementById("importResults").addEventListener("click", importJobResults);
+  document.getElementById("autoAssistResults").addEventListener("click", autoAssistVisibleJobs);
   document.getElementById("autofillSelected").addEventListener("click", autofillSelected);
   document.getElementById("clickNext").addEventListener("click", clickSafeNext);
   document.getElementById("clickFinalSubmit").addEventListener("click", clickFinalSubmit);
@@ -68,6 +72,8 @@ function bindActions() {
   document.getElementById("startQueue").addEventListener("click", () => queueAction("QUEUE_START"));
   document.getElementById("pauseQueue").addEventListener("click", () => queueAction("QUEUE_PAUSE"));
   document.getElementById("runNextQueue").addEventListener("click", () => queueAction("QUEUE_RUN_NEXT"));
+  document.getElementById("markQueueApplied").addEventListener("click", () => queueAction("QUEUE_MARK_APPLIED_AND_CONTINUE"));
+  document.getElementById("skipQueueJob").addEventListener("click", () => queueAction("QUEUE_SKIP_AND_CONTINUE"));
   document.getElementById("campaignSelect").addEventListener("change", loadQueue);
 }
 
@@ -179,6 +185,73 @@ async function matchJob() {
     });
     renderJob(data.match);
     message("Match score generated.");
+  } catch (error) {
+    message(error.message);
+  }
+}
+
+async function scanJobResults() {
+  try {
+    const limit = Math.min(Number(document.getElementById("importLimit").value || 10), 10);
+    const result = await sendToTab({ type: "DETECT_JOB_RESULTS", limit });
+    if (result?.error) throw new Error(result.error);
+    state.resultImport = { jobs: result.jobs || [], sourcePlatform: result.sourcePlatform || "", url: result.url || "" };
+    renderImportResults();
+    message(`${state.resultImport.jobs.length} visible job(s) detected.`);
+  } catch (error) {
+    message(error.message);
+  }
+}
+
+async function importJobResults() {
+  if (!state.resultImport.jobs.length) await scanJobResults();
+  if (!state.resultImport.jobs.length) return message("No job results detected on this page.");
+  try {
+    const createCampaign = document.getElementById("createCampaignFromImport").checked;
+    const data = await api("/api/extension/import-jobs", {
+      method: "POST",
+      body: JSON.stringify({
+        sourcePlatform: state.resultImport.sourcePlatform,
+        pageUrl: state.resultImport.url,
+        jobs: state.resultImport.jobs,
+        createCampaign,
+        approveImportedJobs: false,
+        campaignName: document.getElementById("importCampaignName").value,
+        targetCount: Math.min(Number(document.getElementById("importLimit").value || 10), 10),
+        minMatchScore: Number(document.getElementById("importMinScore").value || 70)
+      })
+    });
+    await loadQueue();
+    message(createCampaign && data.campaign ? `Imported ${data.importedCount} job(s) and created a campaign.` : `Imported ${data.importedCount} job(s).`);
+  } catch (error) {
+    message(error.message);
+  }
+}
+
+async function autoAssistVisibleJobs() {
+  try {
+    await scanJobResults();
+    if (!state.resultImport.jobs.length) return message("No LinkedIn jobs were detected. Open linkedin.com/jobs and scroll to More jobs for you, then try again.");
+    const limit = 10;
+    const data = await api("/api/extension/import-jobs", {
+      method: "POST",
+      body: JSON.stringify({
+        sourcePlatform: state.resultImport.sourcePlatform,
+        pageUrl: state.resultImport.url,
+        jobs: state.resultImport.jobs,
+        createCampaign: true,
+        approveImportedJobs: true,
+        campaignName: document.getElementById("importCampaignName").value || `Auto Assist ${state.resultImport.sourcePlatform || "Jobs"}`,
+        targetCount: limit,
+        minMatchScore: Number(document.getElementById("importMinScore").value || 0)
+      })
+    });
+    if (!data.campaign?.id) return message(`Imported ${data.importedCount || 0} job(s), but no runnable campaign was created.`);
+    const result = await chrome.runtime.sendMessage({ type: "QUEUE_START", campaignId: data.campaign.id });
+    if (result?.error) throw new Error(result.error);
+    state.queue = { campaigns: result.campaigns || [], state: result.state || state.queue.state };
+    renderQueue();
+    message("Auto Assist started. LinkedIn final submit will pause for your manual confirmation.");
   } catch (error) {
     message(error.message);
   }
@@ -335,6 +408,27 @@ function renderJob(match) {
       <p>${escapeHtml(job.sourcePlatform || state.page.sourcePlatform || "Current page")}</p>
       ${match ? `<span class="pill">Match ${match.overallScore}/100</span>` : saved?.matches?.[0] ? `<span class="pill">Saved</span>` : ""}`
     : `<p>No job details detected yet.</p>`;
+}
+
+function renderImportResults() {
+  const summary = document.getElementById("importSummary");
+  const container = document.getElementById("importJobs");
+  const jobs = state.resultImport.jobs || [];
+  summary.style.display = "block";
+  summary.textContent = jobs.length
+    ? `${jobs.length} job(s) detected on ${state.resultImport.sourcePlatform || "this page"}.`
+    : "No supported job cards detected on this page.";
+  container.innerHTML = "";
+  for (const job of jobs.slice(0, 20)) {
+    const card = document.createElement("div");
+    card.className = "queue-card";
+    card.innerHTML = `
+      <div class="field-title">${escapeHtml(job.title || "Untitled job")}</div>
+      <div class="field-meta">${escapeHtml(job.company || "Unknown company")} · ${escapeHtml(job.location || "Location not detected")}</div>
+      <p class="hint">${escapeHtml((job.snippet || job.description || "").slice(0, 160))}</p>
+    `;
+    container.appendChild(card);
+  }
 }
 
 function renderResumeHelp() {

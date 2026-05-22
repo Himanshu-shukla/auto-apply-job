@@ -102,6 +102,10 @@ export async function POST(request: NextRequest) {
 }
 
 function normalizeResultStatus(status: unknown, job: any) {
+  if (status === "manually_submitted") {
+    return { attemptStatus: "submitted", campaignStatus: "submitted", markApplied: true };
+  }
+  if (status === "skipped") return { attemptStatus: "blocked", campaignStatus: "skipped", markApplied: false };
   if (status === "submitted" && job.sourceType === "company_career_page" && job.automationLevel === "one_click_apply") {
     return { attemptStatus: "submitted", campaignStatus: "submitted", markApplied: true };
   }

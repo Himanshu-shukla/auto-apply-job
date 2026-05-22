@@ -68,12 +68,45 @@ const PLATFORM_ADAPTERS = [
       if (/\bdesired pay|desired salary|salary expectation\b/.test(text)) return mapping("expectedSalary", 92, "ZipRecruiter salary field.");
       return base;
     }
+  },
+  {
+    id: "glassdoor",
+    name: "Glassdoor Apply",
+    hostPattern: /(^|\.)glassdoor\.com$/i,
+    sourcePlatform: "Glassdoor",
+    formSelectors: ["[class*='apply']", "[id*='apply']", "form"],
+    safeNext: /\b(next|continue|review)\b/i,
+    finalSubmitBlockedReason: "Glassdoor is a restricted platform; review and submit manually.",
+    map(field, base) {
+      const text = fieldText(field);
+      if (/\bfirst\s+name\b/.test(text)) return mapping("firstName", 98, "Glassdoor first name field.");
+      if (/\blast\s+name\b/.test(text)) return mapping("lastName", 98, "Glassdoor last name field.");
+      if (/\bresume|cv|upload|attach\b/.test(text) || field.type === "file") return mapping("resumeUpload", 99, "Glassdoor resume upload detected.");
+      return base;
+    }
+  },
+  {
+    id: "dice",
+    name: "Dice Apply",
+    hostPattern: /(^|\.)dice\.com$/i,
+    sourcePlatform: "Dice",
+    formSelectors: ["[class*='apply']", "[id*='apply']", "form"],
+    safeNext: /\b(next|continue|review)\b/i,
+    finalSubmitBlockedReason: "Dice is a restricted platform; review and submit manually.",
+    map(field, base) {
+      const text = fieldText(field);
+      if (/\bfirst\s+name\b/.test(text)) return mapping("firstName", 98, "Dice first name field.");
+      if (/\blast\s+name\b/.test(text)) return mapping("lastName", 98, "Dice last name field.");
+      if (/\bresume|cv|upload|attach\b/.test(text) || field.type === "file") return mapping("resumeUpload", 99, "Dice resume upload detected.");
+      return base;
+    }
   }
 ];
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   try {
     if (message.type === "DETECT_PAGE") sendResponse(detectPage());
+    if (message.type === "DETECT_JOB_RESULTS") sendResponse(detectJobResults(message.limit));
     if (message.type === "FILL_FIELDS") sendResponse(fillFields(message.fields || []));
     if (message.type === "ATTACH_RESUME") sendResponse(attachResume(message.resume || {}, message.selector));
     if (message.type === "INSERT_ANSWER") sendResponse(insertAnswer(message.selector, message.answer));
@@ -98,6 +131,17 @@ function detectPage() {
     questions: fields.filter((field) => field.profileKey === "customQuestion" || field.tagName === "textarea"),
     hasApplicationForm: fields.length > 0,
     automationState: inspectAutomationState(fields)
+  };
+}
+
+function detectJobResults(limit = 10) {
+  const sourcePlatform = inferSourcePlatform(location.href);
+  const jobs = extractJobCards(sourcePlatform).slice(0, clampLimit(limit));
+  return {
+    url: location.href,
+    sourcePlatform,
+    jobs,
+    count: jobs.length
   };
 }
 
@@ -286,6 +330,147 @@ function extractJob() {
   };
 }
 
+function extractJobCards(sourcePlatform) {
+  if (sourcePlatform === "LinkedIn") return extractLinkedInJobCards();
+  const selectors = [
+    "[data-job-id]",
+    ".job-card-container",
+    ".job-card-list",
+    ".job-card-list__entity-lockup",
+    ".scaffold-layout__list-item",
+    "[data-testid*='job']",
+    ".job_seen_beacon",
+    ".jobs-search-results__list-item",
+    ".jobCard",
+    ".job-card",
+    ".card",
+    "li"
+  ];
+  const linkNodes = Array.from(document.querySelectorAll("a[href*='/jobs/view/'], a[href*='viewjob'], a[href*='job-detail'], a[href*='jk=']"))
+    .map((link) => link.closest(".job-card-container, .job-card-list, .jobs-search-results__list-item, .scaffold-layout__list-item, [data-job-id], li, article") || link);
+  const nodes = uniqueElements([...linkNodes, ...selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)))]);
+  const cards = nodes
+    .map((node) => normalizeJobCard(node, sourcePlatform))
+    .filter((job) => job.title && job.applyUrl && !looksLikeNavigation(job.title));
+  return dedupeJobCards(cards);
+}
+
+function extractLinkedInJobCards() {
+  if (!/^\/jobs(?:\/|$)/i.test(location.pathname)) return [];
+  const container = findLinkedInMoreJobsContainer() || document;
+  const links = Array.from(container.querySelectorAll("a[href*='/jobs/view/'], a[href*='/jobs/collections/recommended/']"))
+    .filter((link) => isLikelyLinkedInJobLink(link));
+  const nodes = links.map((link) => link.closest(".job-card-container, .job-card-list, .scaffold-layout__list-item, li, article, div") || link);
+  const cards = uniqueElements(nodes)
+    .map((node) => normalizeJobCard(node, "LinkedIn"))
+    .filter((job) => job.title && job.applyUrl && !looksLikeNavigation(job.title));
+  return dedupeJobCards(cards);
+}
+
+function findLinkedInMoreJobsContainer() {
+  const headings = Array.from(document.querySelectorAll("h1, h2, h3, h4, span, div"))
+    .filter((element) => /^more jobs for you$/i.test((element.innerText || element.textContent || "").trim()));
+  for (const heading of headings) {
+    let node = heading.parentElement;
+    while (node && node !== document.body) {
+      const links = node.querySelectorAll("a[href*='/jobs/view/'], a[href*='/jobs/collections/recommended/']");
+      if (links.length >= 2) return node;
+      node = node.parentElement;
+    }
+  }
+  return null;
+}
+
+function isLikelyLinkedInJobLink(link) {
+  const href = link.getAttribute("href") || "";
+  const text = (link.innerText || link.textContent || "").replace(/\s+/g, " ").trim();
+  if (!/\/jobs\/view\/|\/jobs\/collections\/recommended\//i.test(href)) return false;
+  if (!text || looksLikeNavigation(text)) return false;
+  return !/\b(easy apply|promoted|viewed|actively reviewing applicants|be an early applicant)\b/i.test(text);
+}
+
+function normalizeJobCard(node, sourcePlatform) {
+  const link = bestJobLink(node);
+  const title = textFromNode(node, [
+    "[data-testid*='title']",
+    ".jobTitle",
+    ".job-title",
+    ".base-search-card__title",
+    "[class*='title']",
+    "a"
+  ]) || link?.textContent?.trim() || "";
+  const company = textFromNode(node, [
+    "[data-testid*='company']",
+    ".companyName",
+    ".company",
+    ".base-search-card__subtitle",
+    "[class*='company']"
+  ]);
+  const locationText = textFromNode(node, [
+    "[data-testid*='location']",
+    ".companyLocation",
+    ".location",
+    ".job-location",
+    ".base-search-card__metadata",
+    "[class*='location']"
+  ]);
+  const rawText = (node.innerText || node.textContent || "").replace(/\s+/g, " ").trim();
+  const salary = firstMatch(rawText, /(?:\$|₹|INR|USD)\s?[\d,.]+(?:\s?(?:-|to)\s?(?:\$|₹|INR|USD)?\s?[\d,.]+)?/i);
+  const postedDate = firstMatch(rawText, /\b(?:today|just posted|\d+\s+(?:hour|day|week|month)s?\s+ago)\b/i);
+  return {
+    title: title.replace(/\s+/g, " ").trim().slice(0, 180),
+    company: company.replace(/\s+/g, " ").trim().slice(0, 180),
+    location: locationText.replace(/\s+/g, " ").trim().slice(0, 180),
+    description: rawText.slice(0, 2000),
+    snippet: rawText.slice(0, 500),
+    applyUrl: link ? new URL(link.getAttribute("href"), location.href).toString() : "",
+    pageUrl: location.href,
+    sourcePlatform,
+    detectedSalary: salary,
+    postedDate
+  };
+}
+
+function bestJobLink(node) {
+  const links = node.matches?.("a[href]") ? [node] : Array.from(node.querySelectorAll("a[href]"));
+  return links.find((link) => /\/jobs\/view\/|\/jobs\/collections\/recommended\/|jobId=|jk=|gh_jid=|position|viewjob|job-detail/i.test(link.getAttribute("href") || "")) ||
+    links.find((link) => /\/jobs?/i.test(link.getAttribute("href") || "")) ||
+    links[0] ||
+    null;
+}
+
+function textFromNode(node, selectors) {
+  for (const selector of selectors) {
+    const element = node.querySelector(selector);
+    const value = element?.innerText || element?.textContent || "";
+    if (value.trim()) return value.trim();
+  }
+  return "";
+}
+
+function dedupeJobCards(cards) {
+  const seen = new Set();
+  return cards.filter((job) => {
+    const key = `${job.applyUrl}|${job.title}|${job.company}`.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function uniqueElements(elements) {
+  return Array.from(new Set(elements)).filter((element) => element && element !== document.body && element !== document.documentElement);
+}
+
+function looksLikeNavigation(value) {
+  return /^(jobs|search|apply|save|next|previous|filter|sign in|log in)$/i.test(String(value || "").trim());
+}
+
+function clampLimit(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? Math.max(1, Math.min(10, numeric)) : 10;
+}
+
 function textFromSelectors(selectors) {
   for (const selector of selectors) {
     const element = document.querySelector(selector);
@@ -310,6 +495,7 @@ function inferSourcePlatform(url) {
   if (/indeed/i.test(host)) return "Indeed";
   if (/ziprecruiter/i.test(host)) return "ZipRecruiter";
   if (/glassdoor/i.test(host)) return "Glassdoor";
+  if (/dice/i.test(host)) return "Dice";
   if (/naukri/i.test(host)) return "Naukri";
   return host || "Current Page";
 }

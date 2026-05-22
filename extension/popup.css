@@ -108,6 +108,11 @@ select {
   outline: none;
 }
 
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 6px;
+}
+
 textarea {
   min-height: 70px;
   resize: vertical;
@@ -124,7 +129,7 @@ label {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 0;
   background: #fff;
   border-bottom: 1px solid var(--line);

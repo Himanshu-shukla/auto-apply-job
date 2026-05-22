@@ -26,7 +26,7 @@ export const automationOrder: AutomationLevel[] = [
   "api_apply"
 ];
 
-const restrictedDomains = ["linkedin.", "indeed.", "glassdoor.", "naukri.", "monster.", "ziprecruiter."];
+const restrictedDomains = ["linkedin.", "indeed.", "glassdoor.", "naukri.", "monster.", "ziprecruiter.", "dice."];
 const emailPattern = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 
 export function normalizeDomain(value?: string | null): string | null {

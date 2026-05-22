@@ -18,6 +18,8 @@ async function handleMessage(message) {
   if (message.type === "QUEUE_PAUSE") return pauseQueue();
   if (message.type === "QUEUE_RUN_NEXT") return runNextQueueJob(message.campaignId);
   if (message.type === "QUEUE_RETRY") return retryQueueJob(message.campaignId, message.campaignJobId);
+  if (message.type === "QUEUE_MARK_APPLIED_AND_CONTINUE") return manualQueueResult(message.campaignId, "manually_submitted");
+  if (message.type === "QUEUE_SKIP_AND_CONTINUE") return manualQueueResult(message.campaignId, "skipped");
   return {};
 }
 
@@ -44,6 +46,35 @@ async function retryQueueJob(campaignId, campaignJobId) {
     body: JSON.stringify({ campaignId, campaignJobId })
   });
   return queueStatus();
+}
+
+async function manualQueueResult(campaignId, status) {
+  const state = await getQueueState();
+  const queue = await loadQueue(campaignId || state.campaignId);
+  const campaign = queue.campaigns.find((item) => item.id === (campaignId || state.campaignId)) || queue.campaigns[0];
+  const item = selectedQueueItem(campaign, state.lastJobId);
+  if (!campaign || !item) throw new Error("No recent queue job is available to update.");
+  await api("/api/extension/campaign-result", {
+    method: "POST",
+    body: JSON.stringify({
+      campaignId: campaign.id,
+      campaignJobId: item.id,
+      applicationId: item.applicationId,
+      status,
+      pageUrl: item.job.applyUrl,
+      filledFields: [],
+      skippedFields: [],
+      finalSubmitClicked: false,
+      errorMessage: status === "skipped" ? "Skipped by user from extension queue." : null
+    })
+  });
+  await setQueueState({
+    ...state,
+    campaignId: campaign.id,
+    running: true,
+    lastMessage: status === "skipped" ? "Skipped job. Continuing queue." : "Marked applied. Continuing queue."
+  });
+  return runNextQueueJob(campaign.id);
 }
 
 async function runNextQueueJob(campaignId) {
@@ -85,23 +116,11 @@ async function processQueueItem(tabId, item) {
   let proofImage = null;
   try {
     await navigate(tabId, item.job.applyUrl);
-    detection = await sendToTabWithRetry(tabId, { type: "DETECT_PAGE" });
-    const profileData = await api("/api/extension/profile");
-    const fields = (detection.fields || [])
-      .filter((field) => field.checked && field.profileKey !== "resumeUpload")
-      .map((field) => ({ ...field, value: valueFor(profileData.profile, field.profileKey) }))
-      .filter((field) => String(field.value ?? "").trim() !== "");
-    const fillResult = fields.length ? await sendToTabWithRetry(tabId, { type: "FILL_FIELDS", fields }) : { filled: [], skipped: [] };
-    filledFields = fillResult.filled || [];
-    skippedFields = fillResult.skipped || [];
-
-    const upload = (detection.fields || []).find((field) => field.profileKey === "resumeUpload");
-    if (upload) {
-      attachment = await attachResume(tabId, upload);
-      const logItem = { label: upload.label || "Resume upload", profileKey: "resumeUpload", filled: Boolean(attachment.attached), reason: attachment.reason };
-      if (attachment.attached) filledFields.push(logItem);
-      else skippedFields.push(logItem);
-    }
+    const stepResult = await runAssistedSteps(tabId, item);
+    detection = stepResult.detection;
+    filledFields = stepResult.filledFields;
+    skippedFields = stepResult.skippedFields;
+    attachment = stepResult.attachment;
 
     const policy = finalSubmitPolicy(item.job);
     finalSubmit = await sendToTabWithRetry(tabId, { type: "CLICK_FINAL_SUBMIT", policy });
@@ -119,6 +138,73 @@ async function processQueueItem(tabId, item) {
     await saveResult(item, { status: "failed", detection, filledFields, skippedFields, attachment, finalSubmit, proofImage, errorMessage: message }).catch(() => {});
     return { status: "failed", continueRunning: false, message };
   }
+}
+
+async function runAssistedSteps(tabId, item) {
+  const profileData = await api("/api/extension/profile");
+  let detection = null;
+  let attachment = null;
+  const filledFields = [];
+  const skippedFields = [];
+  for (let step = 0; step < 3; step += 1) {
+    detection = await sendToTabWithRetry(tabId, { type: "DETECT_PAGE" });
+    if (detection.automationState?.blocker) break;
+    const fields = (detection.fields || [])
+      .filter((field) => field.checked && field.profileKey !== "resumeUpload")
+      .map((field) => ({ ...field, value: valueFor(profileData.profile, field.profileKey) }))
+      .filter((field) => String(field.value ?? "").trim() !== "");
+    const fillResult = fields.length ? await sendToTabWithRetry(tabId, { type: "FILL_FIELDS", fields }) : { filled: [], skipped: [] };
+    filledFields.push(...(fillResult.filled || []));
+    skippedFields.push(...(fillResult.skipped || []));
+
+    const answers = await fillDetectedAnswers(tabId, item, detection);
+    filledFields.push(...answers.filled);
+    skippedFields.push(...answers.skipped);
+
+    const upload = (detection.fields || []).find((field) => field.profileKey === "resumeUpload");
+    if (upload && !attachment?.attached) {
+      attachment = await attachResume(tabId, upload);
+      const logItem = { label: upload.label || "Resume upload", profileKey: "resumeUpload", filled: Boolean(attachment.attached), reason: attachment.reason };
+      if (attachment.attached) filledFields.push(logItem);
+      else skippedFields.push(logItem);
+    }
+
+    if (!detection.automationState?.canClickNext || detection.automationState?.unknownRequiredFields) break;
+    const next = await sendToTabWithRetry(tabId, { type: "CLICK_SAFE_NEXT" });
+    if (!next.clicked) break;
+    await sleep(1200);
+  }
+  return { detection, filledFields, skippedFields, attachment };
+}
+
+async function fillDetectedAnswers(tabId, item, detection) {
+  const filled = [];
+  const skipped = [];
+  for (const field of (detection.questions || []).slice(0, 6)) {
+    const question = field.label || field.nearbyText || field.placeholder || "";
+    if (!question.trim()) continue;
+    try {
+      const data = await api("/api/extension/generate-answer", {
+        method: "POST",
+        body: JSON.stringify({
+          question,
+          fieldLimit: field.maxLength,
+          tone: "professional",
+          jobId: item.job.id,
+          jobDescription: item.job.description,
+          jobTitle: item.job.title,
+          company: item.job.company
+        })
+      });
+      const inserted = await sendToTabWithRetry(tabId, { type: "INSERT_ANSWER", selector: field.selector, answer: data.answer });
+      const logItem = { label: question, profileKey: "customQuestion", filled: Boolean(inserted.inserted), reason: data.needsConfirmation ? "Needs confirmation." : undefined };
+      if (inserted.inserted) filled.push(logItem);
+      else skipped.push(logItem);
+    } catch (error) {
+      skipped.push({ label: question, profileKey: "customQuestion", filled: false, reason: error instanceof Error ? error.message : "Answer generation failed." });
+    }
+  }
+  return { filled, skipped };
 }
 
 async function attachResume(tabId, uploadField) {
@@ -227,6 +313,14 @@ function finalSubmitPolicy(job) {
     finalSubmitAllowed,
     reason: finalSubmitAllowed ? "" : "Source policy requires manual final submit."
   };
+}
+
+function selectedQueueItem(campaign, lastJobId) {
+  if (!campaign?.jobs?.length) return null;
+  return campaign.jobs.find((item) => item.id === lastJobId) ||
+    campaign.jobs.find((item) => item.status === "blocked") ||
+    campaign.jobs.find((item) => item.status === "failed") ||
+    campaign.jobs[0];
 }
 
 function valueFor(profile, key) {

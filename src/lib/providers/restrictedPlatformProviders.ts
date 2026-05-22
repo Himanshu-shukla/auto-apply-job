@@ -42,5 +42,5 @@ export class RestrictedPlatformProvider implements JobProvider {
 }
 
 export function getRestrictedPlatformProviders(): JobProvider[] {
-  return ["LinkedIn", "Indeed", "Glassdoor", "ZipRecruiter"].map((name) => new RestrictedPlatformProvider(name));
+  return ["LinkedIn", "Indeed", "Glassdoor", "ZipRecruiter", "Dice"].map((name) => new RestrictedPlatformProvider(name));
 }

@@ -18,6 +18,7 @@
     <nav class="tabs" aria-label="Popup tabs">
       <button class="tab active" data-tab="connect">Connect</button>
       <button class="tab" data-tab="job">Current Job</button>
+      <button class="tab" data-tab="import">Import</button>
       <button class="tab" data-tab="autofill">Autofill</button>
       <button class="tab" data-tab="answers">Answers</button>
       <button class="tab" data-tab="queue">Queue</button>
@@ -44,6 +45,30 @@
           <button id="matchJob">Match</button>
         </div>
         <div id="resumeHelp" class="notice"></div>
+      </section>
+
+      <section id="import" class="panel">
+        <div class="row spaced">
+          <strong>Job Board Import</strong>
+          <button id="scanResults">Scan</button>
+        </div>
+        <label>Import limit</label>
+        <select id="importLimit">
+          <option value="10">10 jobs</option>
+        </select>
+        <label>
+          <input id="createCampaignFromImport" type="checkbox" />
+          Create campaign from imported jobs
+        </label>
+        <label>Campaign name</label>
+        <input id="importCampaignName" placeholder="Browser import campaign" />
+        <label>Minimum match score</label>
+        <input id="importMinScore" type="number" min="0" max="100" value="70" />
+        <button id="importResults" class="primary wide">Import Detected Jobs</button>
+        <button id="autoAssistResults" class="wide">Auto Assist Visible Jobs</button>
+        <div id="importSummary" class="notice"></div>
+        <div id="importJobs"></div>
+        <p class="hint">Auto Assist imports up to 10 jobs from LinkedIn's More jobs for you section, creates a ready queue, fills safe fields, and pauses before final submit.</p>
       </section>
 
       <section id="autofill" class="panel">
@@ -81,6 +106,10 @@
           <button id="startQueue" class="primary">Start</button>
           <button id="pauseQueue">Pause</button>
           <button id="runNextQueue">Run Next</button>
+        </div>
+        <div class="row">
+          <button id="markQueueApplied" class="primary">Mark Applied & Continue</button>
+          <button id="skipQueueJob">Skip & Continue</button>
         </div>
         <div id="queueSummary" class="notice"></div>
         <div id="queueJobs"></div>
